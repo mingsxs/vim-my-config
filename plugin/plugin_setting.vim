@@ -326,6 +326,8 @@ nnoremap <silent> <Leader>ag :execute(<SID>agSearchExpandWord())<CR>
 "let $GTAGSLABEL = 'default'
 if filereadable(expand('~/.globalrc'))
     let $GTAGSCONF = expand('~/.globalrc')
+elseif filereadable(expand('~/.gtags.conf'))
+    let $GTAGSCONF = expand('~/.gtags.conf')
 else
     let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
 endif
