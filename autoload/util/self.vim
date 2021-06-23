@@ -263,7 +263,7 @@ function! util#self#OnPressEsc()
 
     " Close help window
     for winnr in range(1, l:winnrs)
-        if getwinvar(winnr, '&ft') == 'help'
+        if winnrs > 1 && getwinvar(winnr, '&ft') == 'help'
             exe winnr."quit"
             return
         endif
