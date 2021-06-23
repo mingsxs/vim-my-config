@@ -151,14 +151,14 @@ set cscopequickfix=s-,c-,d-,i-,t-,e-
 " cscope search types above (s,g,c,t,e,f,i,d).  The result of your cscope
 " search will be displayed in the current window.  You can use CTRL-T to
 " go back to where you were before the search.  
-nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>  
-nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>  
-nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>  
-nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>  
-nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>  
-nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>  
-nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+"nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>  
+"nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>  
+"nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>  
+"nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>  
+"nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>  
+"nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>  
+"nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+"nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 
 " Using 'CTRL-spacebar' (intepreted as CTRL-@ by vim) then a search type
 " makes the vim window split horizontally, with search result displayed in
@@ -167,14 +167,14 @@ nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 " (Note: earlier versions of vim may not have the :scs command, but it
 " can be simulated roughly via:
 "    nmap <C-@>s <C-W><C-S> :cs find s <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@>s :scs find s <C-R>=expand("<cword>")<CR><CR> 
-nmap <C-@>g :scs find g <C-R>=expand("<cword>")<CR><CR> 
-nmap <C-@>c :scs find c <C-R>=expand("<cword>")<CR><CR> 
-nmap <C-@>t :scs find t <C-R>=expand("<cword>")<CR><CR> 
-nmap <C-@>e :scs find e <C-R>=expand("<cword>")<CR><CR> 
-nmap <C-@>f :scs find f <C-R>=expand("<cfile>")<CR><CR> 
-nmap <C-@>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>   
-nmap <C-@>d :scs find d <C-R>=expand("<cword>")<CR><CR>
+"nmap <C-@>s :scs find s <C-R>=expand("<cword>")<CR><CR> 
+"nmap <C-@>g :scs find g <C-R>=expand("<cword>")<CR><CR> 
+"nmap <C-@>c :scs find c <C-R>=expand("<cword>")<CR><CR> 
+"nmap <C-@>t :scs find t <C-R>=expand("<cword>")<CR><CR> 
+"nmap <C-@>e :scs find e <C-R>=expand("<cword>")<CR><CR> 
+"nmap <C-@>f :scs find f <C-R>=expand("<cfile>")<CR><CR> 
+"nmap <C-@>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>   
+"nmap <C-@>d :scs find d <C-R>=expand("<cword>")<CR><CR>
 
 
 "-----------------------------------------------------------------------
@@ -360,7 +360,7 @@ nnoremap <silent> <leader>gf :GFiles<cr>
 "-----------------------------------------------------------------------
 " Plugin Settings: vim-rooter.
 "-----------------------------------------------------------------------
-let g:rooter_patterns = ['.git', '.svn', '.hg', '.bzr', '_darcs', '.rootdir']
+let g:rooter_patterns = ['.git', '.svn', '.hg', '.bzr', '_darcs', '.root']
 if exists(":lcd")
     let g:rooter_cd_cmd = 'lcd'
 endif
