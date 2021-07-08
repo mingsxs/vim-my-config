@@ -278,7 +278,7 @@ let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git --ignore .pycache -l -g ""
 " Plugin Settings: auto pop menu.
 "-----------------------------------------------------------------------
 " enable for certain filetypes
-let g:apc_enable_ft = {'c':1, 'cpp':1, 'python':1, 'ruby':1, 'perl':1, 'vim':1, 'zsh':1, 'sh':1}
+let g:apc_enable_ft = {'c':1, 'cpp':1, 'python':1, 'ruby':1, 'perl':1, 'vim':1, 'zsh':1, 'sh':1, 'make':1}
 let g:apc_cr_confirm = 1
 
 " source for dictionary, current or other loaded buffers, see ':help cpt'
