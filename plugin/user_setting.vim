@@ -153,7 +153,7 @@ cabbrev<silent> tl tablast
 cabbrev<silent> tc tabclose
 
 " creat a new tab and do E.
-cmap<silent> tn :Texplore<cr>
+cmap<silent> tn :Texplore<cr> <C-n>
 
 " go to previous tabpage in tabpage jump list.
 nnoremap <silent> [t :call mingsxs#tabpage#jumper#GoPreviousTabpage()<cr>
