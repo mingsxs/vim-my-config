@@ -270,3 +270,23 @@ function! util#self#OnPressEsc()
     endfor
 endfunction
 
+
+"-----------------------------------------------------------------------
+" Strip some setting that to open big file quickly.
+"-----------------------------------------------------------------------
+function! util#self#OpenLargeFile()
+    " save memory when other file is viewed
+    setlocal bufhidden=unload
+    " is read-only (write with :w new_filename)
+    setlocal buftype=nowrite
+    " no swap file
+    setlocal noswapfile
+    " no undo possible
+    setlocal undolevels=-1
+    " disable airline plugin for current buffer
+    let b:airline_disable_statusline = 1
+    " disable ale plugin for current buffer
+    let b:ale_enabled = 0
+    " display message
+    au VimEnter *  echo 'The file is larger than ' . (g:large_file_size/1024/1024) . ' MB.'
+endfunction

@@ -252,6 +252,22 @@ augroup END
 
 
 "-----------------------------------------------------------------------
+" Open large files.
+"-----------------------------------------------------------------------
+let g:large_file_size = 1024 * 1024 * 8
+augroup OpenLargeFile
+    au!
+    au BufReadPre * let fs = getfsize(expand("<afile>")) | if (fs > g:large_file_size || fs == -2) | set ei+=FileType | call util#self#OpenLargeFile() | else | set ei-=FileType | endif
+augroup END
+
+
+"-----------------------------------------------------------------------
+" Quick access help.
+"-----------------------------------------------------------------------
+nmap <silent> <Leader>h :exe "help " . expand("<cword>")<cr>
+
+
+"-----------------------------------------------------------------------
 " Move to window N by <Leader> + N.
 "-----------------------------------------------------------------------
 nnoremap <silent> <Leader>1 :1wincmd w<CR>
