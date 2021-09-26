@@ -282,7 +282,7 @@ let g:apc_enable_ft = {'c':1, 'cpp':1, 'python':1, 'ruby':1, 'perl':1, 'vim':1, 
 let g:apc_cr_confirm = 1
 
 " source for dictionary, current or other loaded buffers, see ':help cpt'
-set cpt=.,w,b,k
+set cpt+=k
 
 " don't select the first item
 set completeopt=menu,menuone,noselect
