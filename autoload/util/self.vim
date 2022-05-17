@@ -238,12 +238,14 @@ endfunction
 " Map alt (normaly <Esc>) key as modifier key.
 "-----------------------------------------------------------------------
 function! util#self#TerminalMapAltKey()
-    " set alt key combined with a-z, A-Z
-    for ascval in range(65, 90) + range(97, 122)
-        exe "set <M-".nr2char(ascval).">=\<Esc>".nr2char(ascval)
-    endfor
-    " set key response timeout to 50ms, otherwise you can't hit <Esc> in 1 sec
-    set ttimeoutlen=25
+    if !has('nvim')
+        " set alt key combined with a-z, A-Z
+        for ascval in range(65, 90) + range(97, 122)
+            exe "set <M-".nr2char(ascval).">=\<Esc>".nr2char(ascval)
+        endfor
+        " set key response timeout to 50ms, otherwise you can't hit <Esc> in 1 sec
+        set ttimeoutlen=25
+    endif
 endfunction
 
 
