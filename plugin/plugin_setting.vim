@@ -323,7 +323,7 @@ nnoremap <silent> <Leader>ag :execute(<SID>agSearchExpandWord())<CR>
 "-----------------------------------------------------------------------
 " Plugin Settings: gutentags.
 "-----------------------------------------------------------------------
-"let $GTAGSLABEL = 'default'
+let $GTAGSLABEL = 'native-pygments'
 if filereadable(expand('~/.globalrc'))
     let $GTAGSCONF = expand('~/.globalrc')
 elseif filereadable(expand('~/.gtags.conf'))
@@ -335,11 +335,11 @@ endif
 let g:gutentags_project_root = ['.git', '.svn', '.root', '.hg', '.project']
 let g:gutentags_ctags_tagfile = '.tags'
 let g:gutentags_modules = []
-if executable('ctags')
-    let g:gutentags_modules += ['ctags']
-endif
 if executable('gtags-cscope') && executable('gtags')
     let g:gutentags_modules += ['gtags_cscope']
+endif
+if executable('ctags')
+    let g:gutentags_modules += ['ctags']
 endif
 let g:gutentags_cache_dir = expand('~/.cache/tags')
 " configure ctags arguments
@@ -349,6 +349,8 @@ let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 " use gutentags_plus plugin to auto switch databases, https://github.com/skywind3000/gutentags_plus
 let g:gutentags_plus_switch = 1
 let g:gutentags_plus_height = 8
+" gutentags trace debug info, set to 1 to enable gutentags debug trace.
+let g:gutentags_trace = 0
 
 
 "-----------------------------------------------------------------------
