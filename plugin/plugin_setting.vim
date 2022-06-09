@@ -133,7 +133,10 @@ nmap <silent> <leader><c-\> :vsp<cr>:exec("tag ".expand("<cword>"))<cr>
 set nocst
 
 " set what to show in quickfix window
-set cscopequickfix=s-,c-,d-,i-,t-,e-
+" Normal vim with no cscope find autojump patch
+"set cscopequickfix=s-,c-,d-,i-,t-,e-
+" Vim with cscope find autojump patch
+set cscopequickfix=s-!,c-!,d-!,i-!,t-!,e-
 
 " for cscope shortkey mapping
 " The following maps all invoke one of the following cscope search types:
