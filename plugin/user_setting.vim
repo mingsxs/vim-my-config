@@ -268,6 +268,18 @@ nmap <silent> <Leader>h :exe "help " . expand("<cword>")<cr>
 
 
 "-----------------------------------------------------------------------
+" Windows WSL clipboard support.
+"-----------------------------------------------------------------------
+let s:win_clip = '/mnt/c/Windows/System32/clip.exe'  " change this path according to your mount point
+if executable(s:win_clip)
+    augroup WSLYank
+        autocmd!
+        autocmd TextYankPost * if v:event.operator ==# 'y' | call system(s:win_clip, @0) | endif
+    augroup END
+endif
+
+
+"-----------------------------------------------------------------------
 " Move to window N by <Leader> + N.
 "-----------------------------------------------------------------------
 nnoremap <silent> <Leader>1 :1wincmd w<CR>
