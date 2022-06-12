@@ -187,7 +187,7 @@ set cscopequickfix=s-!,c-!,d-!,i-!,t-!,e-
 let g:ale_enabled = 1
 
 " Set ale linters globally.
-let g:ale_linters = {}
+"let g:ale_linters = {}
 "if executable('gcc')
 "    let g:ale_linters.c = "gcc"
 "endif
@@ -204,7 +204,7 @@ let g:ale_linters_explicit = 0
 let g:ale_completion_enabled = 0
 
 " Set max suggestion number of ale completion.
-let g:ale_completion_max_suggestions = 20
+"let g:ale_completion_max_suggestions = 20
 
 " Enable ale airline extension.
 let g:airline#extensions#ale#enabled = 1
@@ -235,7 +235,7 @@ let g:ale_list_window_size = 6
 let g:ale_close_preview_on_insert = 1
 
 " Set ale linter delay.
-let g:ale_lint_delay = 2400
+let g:ale_lint_delay = 2000
 
 
 "-----------------------------------------------------------------------
