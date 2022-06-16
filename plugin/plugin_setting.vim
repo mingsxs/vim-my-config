@@ -133,12 +133,13 @@ nmap <silent> <leader><c-\> :vsp<cr>:exec("tag ".expand("<cword>"))<cr>
 set nocst
 
 " set what to show in quickfix window
-" Normal vim with no cscope find autojump patch, nvim included
-" Vim with cscope find autojump patch and compiled by me
-if has("nvim")
-    set cscopequickfix=s-,c-,d-,i-,t-,e-
-else
+" Normal vim with no cscope autojump patch, nvim included
+" Vim with cscope autojump patch and compiled by me
+" 9999 is customized patch number
+if exists('v:versionlong') && v:versionlong % 10000 == 9999
     set cscopequickfix=s-!,c-!,d-!,i-!,t-!,e-
+else
+    set cscopequickfix=s-,c-,d-,i-,t-,e-
 endif
 
 " for cscope shortkey mapping
