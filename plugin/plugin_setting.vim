@@ -338,7 +338,7 @@ else
     let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
 endif
 " configure gutentags settings, https://github.com/ludovicchabant/vim-gutentags/blob/master/doc/gutentags.txt
-let g:gutentags_project_root = ['.git', '.svn', '.root', '.hg', '.project']
+let g:gutentags_project_root = ['.git', '.svn', '.root', '.hg', '.project', '.github']
 let g:gutentags_ctags_tagfile = '.tags'
 let g:gutentags_modules = []
 if executable('gtags-cscope') && executable('gtags')
