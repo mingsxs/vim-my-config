@@ -43,8 +43,18 @@ nnoremap <silent> <Leader>t :call util#self#TabSpaceToggle()<cr>
 "-----------------------------------------------------------------------
 augroup TabpageJumper
     au!
-    autocmd TabLeave * :call mingsxs#tabpage#jumper#MaintainJumpQueueWhenLeave()
-    autocmd TabEnter * :call mingsxs#tabpage#jumper#MaintainJumpQueueWhenEnter()
+    autocmd TabLeave *  :call mingsxs#tabpage#jumper#MaintainJumpQueueWhenLeave()
+    autocmd TabEnter *  :call mingsxs#tabpage#jumper#MaintainJumpQueueWhenEnter()
+augroup END
+
+
+"-----------------------------------------------------------------------
+" close duplicated tabpages when opening new.
+"-----------------------------------------------------------------------
+augroup TabpageRmDup
+    au!
+    autocmd TabNew *    :call util#self#CloseDupTabs()
+    autocmd TabLeave *  :call util#self#UpdateTabnr()
 augroup END
 
 

@@ -7,7 +7,6 @@
 " Author: Ming Li (adagio.ming@gmail.com)           |
 "----------------------------------------------------
 
-
 " Check necessary events dependency before sourcing script.
 if !(exists('##TabEnter') && exists('##TabLeave'))
     echomsg "Error: Plugin requires event #TabEnter & #TabLeave supported, update VIM first."
@@ -106,6 +105,11 @@ endif
 " update tabpage jump queue, can only be triggered when open a new tab or
 " manually jump to certain existent tabpage.
 function! mingsxs#tabpage#jumper#MaintainJumpQueueWhenEnter()
+    "disable this plugin
+    if get(g:, 'g:tabpage_jumper_enabled', 0) == 0
+        return
+    endif
+
     let l:curPageNumber = tabpagenr()
 
     if s:tabpageJumpQueueUpdateTrigger
@@ -178,6 +182,11 @@ endfunction
 " **********************************************************************
 " compare current tabpage number with the one stored when #TabEnter comes.
 function! mingsxs#tabpage#jumper#MaintainJumpQueueWhenLeave()
+    "disable this plugin
+    if get(g:, 'g:tabpage_jumper_enabled', 0) == 0
+        return
+    endif
+
     let l:curPageNumber = tabpagenr()
     let l:i = 0
     let l:length = len(s:tabpageJumpQueue)

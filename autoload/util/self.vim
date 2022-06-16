@@ -292,3 +292,38 @@ function! util#self#OpenLargeFile()
     " display message
     au VimEnter *  echo 'The file is larger than ' . (g:large_file_size/1024/1024) . ' MB.'
 endfunction
+
+"-----------------------------------------------------------------------
+" Close duplicated tabpages on opening new tabpages.
+"-----------------------------------------------------------------------
+function! util#self#UpdateTabnr()
+    let s:tabnr_on_leave = tabpagenr()
+endfunction
+
+function! util#self#CloseDupTabs()
+    let ibuf = bufnr()
+    let leavingtab = get(s:, 'tabnr_on_leave', -1)
+    let tabpagebufs = []
+    for nr in range(tabpagenr('$'))
+        let tabnr = nr + 1
+        let buflist = tabpagebuflist(tabnr)
+        let idx = index(buflist, ibuf)
+        if (leavingtab == tabnr) && idx > 0
+            call remove(buflist, idx)
+        endif
+        call add(tabpagebufs, buflist)
+    endfor
+    let tabnr = 0
+    let weights = []
+    for bufs in tabpagebufs
+        let tabnr += 1
+        if (tabnr != tabpagenr()) && (index(bufs, ibuf) >= 0)
+            call add(weights, [tabnr, len(bufs)])
+        endif
+    endfor
+    if len(weights) > 0
+        " sort with the buffers that the tabpage has opened
+        let weights = sort(weights, {a, b -> a[1] - b[1]})
+        exec weights[0][0]."tabclose"
+    endif
+endfunction
