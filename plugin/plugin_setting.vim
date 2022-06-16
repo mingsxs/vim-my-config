@@ -138,8 +138,6 @@ set nocst
 " 9999 is customized patch number
 if exists('v:versionlong') && v:versionlong % 10000 == 9999
     set cscopequickfix=s-!,c-!,d-!,i-!,t-!,e-
-else
-    set cscopequickfix=s-,c-,d-,i-,t-,e-
 endif
 
 " for cscope shortkey mapping
