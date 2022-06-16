@@ -100,7 +100,7 @@ if exists("+showtabline")
                 let l:file = fnamemodify(l:file, ':p:t')
             endif
             if l:file == ''
-                let l:file = '[No Name]'
+                let l:file = '[Untitled]'
             endif
             let l:s .= l:file
             let l:s .= (l:i == l:t ? '%m' : '')
