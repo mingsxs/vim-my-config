@@ -298,13 +298,7 @@ endfunction
 "-----------------------------------------------------------------------
 " On switch to a new tabpage, TabNew event triggered.
 "-----------------------------------------------------------------------
-function! util#self#SwitchTabWin(prevtab)
-    let prevtabwinnr = tabpagewinnr(a:prevtab, '#')
-    let prevwinft = gettabwinvar(a:prevtab, prevtabwinnr, "&ft")
-    if prevwinft != 'qf' && prevwinft != 'quickfix'
-        return
-    endif
-
+function! util#self#SwitchTabWin()
     let curwinid = win_getid()
     let curtab = tabpagenr()
     let bufwinidlist = win_findbuf(bufnr())
@@ -319,8 +313,6 @@ function! util#self#SwitchTabWin(prevtab)
                     \ winft == 'help')
             if win_gotoid(bufwinid)
                 exec "wincmd c"
-            else
-                echomsg "Invalid window, Tab-".ntab.", Win-".nwin
             endif
         endif
     endfor
@@ -328,12 +320,10 @@ function! util#self#SwitchTabWin(prevtab)
     for ntab in range(1, tabpagenr('$'))
         for nwin in range(1, tabpagewinnr(ntab, '$'))
             " No file type
-            if gettabwinvar(ntab, nwin, "&ft") == ''
+            if empty(gettabwinvar(ntab, nwin, "&ft"))
                 let winid = win_getid(nwin, ntab)
                 if win_gotoid(winid)
                     exec "wincmd c"
-                else
-                    echomsg "Invalid window, Tab-".ntab.", Win-".nwin
                 endif
             endif
         endfor
@@ -361,7 +351,5 @@ function! util#self#SetQuickfixOpen()
     exec "botright copen"
     nnoremap <silent> <buffer> h  <C-W><CR><C-w>K
     nnoremap <silent> <buffer> H  <C-W><CR><C-w>K<C-w>b
-    nnoremap <silent> <buffer> t  <C-w><CR><C-w>T
-    nnoremap <silent> <buffer> T  <C-w><CR><C-w>TgT<C-W><C-W>
     nnoremap <silent> <buffer> v  <C-w><CR><C-w>H<C-W>b<C-W>J<C-W>t
 endfunction

@@ -1,16 +1,7 @@
 "-----------------------------------------------------------------------
-" TabNew.
-"-----------------------------------------------------------------------
-function! util#onevent#TabNew()
-    call util#self#SwitchTabWin(get(s:, 'prev_tabpage', 1))
-endfunction
-
-
-"-----------------------------------------------------------------------
 " TabLeave.
 "-----------------------------------------------------------------------
 function! util#onevent#TabLeave()
-    let s:prev_tabpage = tabpagenr()
     call mingsxs#tabpage#jumper#MaintainJumpQueueWhenLeave()
 endfunction
 

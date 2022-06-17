@@ -39,17 +39,6 @@ nnoremap <silent> <Leader>t :call util#self#TabSpaceToggle()<cr>
 
 
 "-----------------------------------------------------------------------
-" Tab related event autocmd group.
-"-----------------------------------------------------------------------
-augroup TabEvent
-    au!
-    autocmd TabLeave *  :call util#onevent#TabLeave()
-    autocmd TabEnter *  :call util#onevent#TabEnter()
-    autocmd TabNew *    :call util#onevent#TabNew()
-augroup END
-
-
-"-----------------------------------------------------------------------
 " BufReadPost event hanlder.
 "-----------------------------------------------------------------------
 augroup JumpLastCursor
