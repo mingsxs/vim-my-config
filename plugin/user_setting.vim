@@ -39,36 +39,22 @@ nnoremap <silent> <Leader>t :call util#self#TabSpaceToggle()<cr>
 
 
 "-----------------------------------------------------------------------
-" update tabpage jump queue and tabpage queue numbers.
+" Tab related event autocmd group.
 "-----------------------------------------------------------------------
-augroup TabpageJumper
+augroup TabEvent
     au!
-    autocmd TabLeave *  :call mingsxs#tabpage#jumper#MaintainJumpQueueWhenLeave()
-    autocmd TabEnter *  :call mingsxs#tabpage#jumper#MaintainJumpQueueWhenEnter()
+    autocmd TabLeave *  :call util#onevent#TabLeave()
+    autocmd TabEnter *  :call util#onevent#TabEnter()
+    autocmd TabNew *    :call util#onevent#TabNew()
 augroup END
 
 
 "-----------------------------------------------------------------------
-" close duplicated tabpages when opening new.
-"-----------------------------------------------------------------------
-augroup TabpageRmDup
-    au!
-    autocmd TabNew *    :call util#self#CloseDupTabs()
-    autocmd TabLeave *  :call util#self#UpdateTabnr()
-augroup END
-
-
-"-----------------------------------------------------------------------
-" always jump to the last cursor position when edit new file.
+" BufReadPost event hanlder.
 "-----------------------------------------------------------------------
 augroup JumpLastCursor
     au!
-    autocmd BufReadPost *
-          \ if !exists("g:leave_my_cursor_position_alone") |
-          \     if line("'\"") > 0 && line ("'\"") <= line("$") |
-          \         exe "normal g'\"" |
-          \     endif |
-          \ endif
+    autocmd BufReadPost *   :call util#onevent#BufReadPost()
 augroup END
 
 
@@ -163,7 +149,7 @@ cabbrev<silent> tl tablast
 cabbrev<silent> tc tabclose
 
 " creat a new tab and do E.
-cmap<silent> tn :Texplore<cr> <C-n>
+nnoremap <silent> <Leader>n :Texplore<cr> :setlocal relativenumber<cr>
 
 " go to previous tabpage in tabpage jump list.
 nnoremap <silent> [t :call mingsxs#tabpage#jumper#GoPreviousTabpage()<cr>
@@ -240,10 +226,9 @@ call util#self#TerminalMapAltKey()
 
 
 "-----------------------------------------------------------------------
-" Quickfix control.
+" Quickfix open.
 "-----------------------------------------------------------------------
-nnoremap <silent> qo :copen<CR>
-nnoremap <silent> qq :cclose<CR>
+nnoremap <silent> qo :call util#self#SetQuickfixOpen()<CR>
 
 
 "-----------------------------------------------------------------------

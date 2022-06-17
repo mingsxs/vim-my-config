@@ -203,7 +203,7 @@ endfunction
 "-----------------------------------------------------------------------
 function! util#self#HoriNarrowWindow()
     let l:resizeCmd = ':resize -'.v:count1
-    exe l:resizeCmd
+    exec l:resizeCmd
 endfunction
 
 
@@ -212,7 +212,7 @@ endfunction
 "-----------------------------------------------------------------------
 function! util#self#HoriEnlargeWindow()
     let l:resizeCmd = ':resize +'.v:count1
-    exe l:resizeCmd
+    exec l:resizeCmd
 endfunction
 
 
@@ -221,7 +221,7 @@ endfunction
 "-----------------------------------------------------------------------
 function! util#self#VertNarrowWindow()
     let l:resizeCmd = ':vertical resize -'.v:count1
-    exe l:resizeCmd
+    exec l:resizeCmd
 endfunction
 
 
@@ -230,7 +230,7 @@ endfunction
 "-----------------------------------------------------------------------
 function! util#self#VertEnlargeWindow()
     let l:resizeCmd = ':vertical resize +'.v:count1
-    exe l:resizeCmd
+    exec l:resizeCmd
 endfunction
 
 
@@ -241,7 +241,7 @@ function! util#self#TerminalMapAltKey()
     if !has('nvim')
         " set alt key combined with a-z, A-Z
         for ascval in range(65, 90) + range(97, 122)
-            exe "set <M-".nr2char(ascval).">=\<Esc>".nr2char(ascval)
+            exec "set <M-".nr2char(ascval).">=\<Esc>".nr2char(ascval)
         endfor
         " set key response timeout to 50ms, otherwise you can't hit <Esc> in 1 sec
         set ttimeoutlen=25
@@ -257,16 +257,17 @@ function! util#self#OnPressEsc()
     let l:winnrs = winnr('$')
     for winnr in range(1, l:winnrs)
         if getwinvar(winnr, '&ft') == 'qf'
-            exe "cclose"
-            exe "winc p"
+            exec "cclose"
+            exec "winc p"
             return
         endif
     endfor
 
     " Close help window
     for winnr in range(1, l:winnrs)
-        if winnrs > 1 && getwinvar(winnr, '&ft') == 'help'
-            exe winnr."quit"
+        let winft = getwinvar(winnr, '&ft')
+        if winnrs > 1 && (empty(winft) || winft == 'help')
+            exec winnr."quit"
             return
         endif
     endfor
@@ -293,37 +294,74 @@ function! util#self#OpenLargeFile()
     au VimEnter *  echo 'The file is larger than ' . (g:large_file_size/1024/1024) . ' MB.'
 endfunction
 
+
 "-----------------------------------------------------------------------
-" Close duplicated tabpages on opening new tabpages.
+" On switch to a new tabpage, TabNew event triggered.
 "-----------------------------------------------------------------------
-function! util#self#UpdateTabnr()
-    let s:tabnr_on_leave = tabpagenr()
+function! util#self#SwitchTabWin(prevtab)
+    let prevtabwinnr = tabpagewinnr(a:prevtab, '#')
+    let prevwinft = gettabwinvar(a:prevtab, prevtabwinnr, "&ft")
+    if prevwinft != 'qf' && prevwinft != 'quickfix'
+        return
+    endif
+
+    let curwinid = win_getid()
+    let curtab = tabpagenr()
+    let bufwinidlist = win_findbuf(bufnr())
+    "close duplicated windows
+    for bufwinid in bufwinidlist
+        let [ntab, nwin] = win_id2tabwin(bufwinid)
+        let winft = gettabwinvar(ntab, nwin, "&ft")
+        if !(empty(winft) ||
+                    \ ntab == curtab ||
+                    \ winft == 'qf' ||
+                    \ winft == 'quickfix' ||
+                    \ winft == 'help')
+            if win_gotoid(bufwinid)
+                exec "wincmd c"
+            else
+                echomsg "Invalid window, Tab-".ntab.", Win-".nwin
+            endif
+        endif
+    endfor
+    "iterate all windows
+    for ntab in range(1, tabpagenr('$'))
+        for nwin in range(1, tabpagewinnr(ntab, '$'))
+            " No file type
+            if gettabwinvar(ntab, nwin, "&ft") == ''
+                let winid = win_getid(nwin, ntab)
+                if win_gotoid(winid)
+                    exec "wincmd c"
+                else
+                    echomsg "Invalid window, Tab-".ntab.", Win-".nwin
+                endif
+            endif
+        endfor
+        " Close tabpage if it only contains a quickfix window
+        if (tabpagewinnr(ntab, '$') == 1)
+            let winft = gettabwinvar(ntab, 1, "&ft")
+            if winft == 'qf' ||
+                    \ winft == 'quickfix' ||
+                    \ winft == 'help'
+                exec ntab."tabclose"
+            endif
+        endif
+    endfor
+    " jump back to current window
+    if !win_gotoid(curwinid)
+        echoerr "window jump back failed, ID:".curwinid
+    endif
 endfunction
 
-function! util#self#CloseDupTabs()
-    let ibuf = bufnr()
-    let leavingtab = get(s:, 'tabnr_on_leave', -1)
-    let tabpagebufs = []
-    for nr in range(tabpagenr('$'))
-        let tabnr = nr + 1
-        let buflist = tabpagebuflist(tabnr)
-        let idx = index(buflist, ibuf)
-        if (leavingtab == tabnr) && idx > 0
-            call remove(buflist, idx)
-        endif
-        call add(tabpagebufs, buflist)
-    endfor
-    let tabnr = 0
-    let weights = []
-    for bufs in tabpagebufs
-        let tabnr += 1
-        if (tabnr != tabpagenr()) && (index(bufs, ibuf) >= 0)
-            call add(weights, [tabnr, len(bufs)])
-        endif
-    endfor
-    if len(weights) > 0
-        " sort with the buffers that the tabpage has opened
-        let weights = sort(weights, {a, b -> a[1] - b[1]})
-        exec weights[0][0]."tabclose"
-    endif
+
+"-----------------------------------------------------------------------
+" On openning quickfix window.
+"-----------------------------------------------------------------------
+function! util#self#SetQuickfixOpen()
+    exec "botright copen"
+    nnoremap <silent> <buffer> h  <C-W><CR><C-w>K
+    nnoremap <silent> <buffer> H  <C-W><CR><C-w>K<C-w>b
+    nnoremap <silent> <buffer> t  <C-w><CR><C-w>T
+    nnoremap <silent> <buffer> T  <C-w><CR><C-w>TgT<C-W><C-W>
+    nnoremap <silent> <buffer> v  <C-w><CR><C-w>H<C-W>b<C-W>J<C-W>t
 endfunction
