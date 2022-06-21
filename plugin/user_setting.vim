@@ -8,28 +8,21 @@
 
 
 "-----------------------------------------------------------------------
-" file sourced flag.
-"-----------------------------------------------------------------------
-"if !exists('g:user_setting_sourced')
-"    let g:user_setting_sourced = 1
-"endif
-
-"-----------------------------------------------------------------------
 " relative number toggle map.
 "-----------------------------------------------------------------------
-noremap <silent> <c-n> :call util#self#NumberToggle()<cr>
+noremap <silent> <c-n> :call utils#self#NumberToggle()<cr>
 
 
 "-----------------------------------------------------------------------
 " code fold method toggle map.
 "-----------------------------------------------------------------------
-nnoremap <silent> <leader>f :call util#self#CodeFoldToggle()<cr>
+nnoremap <silent> <leader>f :call utils#self#CodeFoldToggle()<cr>
 
 
 "-----------------------------------------------------------------------
 " tabs/spaces expanding toggle map.
 "-----------------------------------------------------------------------
-nnoremap <silent> <Leader>t :call util#self#TabSpaceToggle()<cr>
+nnoremap <silent> <Leader>t :call utils#self#TabSpaceToggle()<cr>
 
 
 "-----------------------------------------------------------------------
@@ -37,7 +30,7 @@ nnoremap <silent> <Leader>t :call util#self#TabSpaceToggle()<cr>
 "-----------------------------------------------------------------------
 augroup JumpLastCursor
     autocmd!
-    autocmd BufReadPost *   :call util#onevent#BufReadPost()
+    autocmd BufReadPost *   :call utils#onevent#BufReadPost()
 augroup END
 
 
@@ -205,19 +198,19 @@ vmap <C-c> y:new ~/.vimbuffer<CR>VGp:x<CR> \| :!cat ~/.vimbuffer \| clip.exe <CR
 "-----------------------------------------------------------------------
 " Extend alt key as modifier.
 "-----------------------------------------------------------------------
-call util#self#TerminalMapAltKey()
+call utils#self#TerminalMapAltKey()
 
 
 "-----------------------------------------------------------------------
 " Quickfix open.
 "-----------------------------------------------------------------------
-nnoremap <silent> qo :call util#self#SetQuickfixOpen()<CR>
+nnoremap <silent> qo :call utils#self#SetQuickfixOpen()<CR>
 
 
 "-----------------------------------------------------------------------
 " Handle Esc.
 "-----------------------------------------------------------------------
-nnoremap <silent> <Esc> :call util#self#OnPressEsc()<CR>
+nnoremap <silent> <Esc> :call utils#self#OnPressEsc()<CR>
 
 
 "-----------------------------------------------------------------------
@@ -235,7 +228,7 @@ augroup END
 let g:large_file_size = 1024 * 1024 * 8
 augroup OpenLargeFile
     au!
-    au BufReadPre * let fs = getfsize(expand("<afile>")) | if (fs > g:large_file_size || fs == -2) | set ei+=FileType | call util#self#OpenLargeFile() | else | set ei-=FileType | endif
+    au BufReadPre * let fs = getfsize(expand("<afile>")) | if (fs > g:large_file_size || fs == -2) | set ei+=FileType | call utils#self#OpenLargeFile() | else | set ei-=FileType | endif
 augroup END
 
 
@@ -264,6 +257,19 @@ augroup ViewWithSwap
     autocmd!
     autocmd SwapExists * let v:swapchoice = "o"
 augroup END
+
+
+"-----------------------------------------------------------------------
+" Set up winloc plugin.
+"-----------------------------------------------------------------------
+let g:winloc_enable = 1     " enable winloc
+augroup Winloc
+    autocmd!
+    autocmd WinNew * :call winloc#winloc#OnWinNew()
+    autocmd QuitPre * :call winloc#winloc#OnCloseWin()
+augroup END
+nnoremap <silent> <Leader>i :call winloc#winloc#JumpWinloc('next')<CR>
+nnoremap <silent> <Leader>o :call winloc#winloc#JumpWinloc('prev')<CR>
 
 
 "-----------------------------------------------------------------------

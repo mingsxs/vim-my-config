@@ -1,7 +1,7 @@
 
 "----------------------------------------------------
 " This file contains self-defined Functions and     |
-" Utilitys.                                         |
+" utilitys.                                         |
 "                                                   |
 " Date: 2019/05/24                                  |
 " Author: Ming Li (adagio.ming@gmail.com)           |
@@ -18,7 +18,7 @@ endif
 "-----------------------------------------------------------------------
 " relativenumber toggle function.
 "-----------------------------------------------------------------------
-function! util#self#NumberToggle()
+function! utils#self#NumberToggle()
     if &relativenumber
         set norelativenumber nonumber
     else
@@ -29,7 +29,7 @@ endfunction
 "-----------------------------------------------------------------------
 " code fold method toggle function.
 "-----------------------------------------------------------------------
-function! util#self#CodeFoldToggle()
+function! utils#self#CodeFoldToggle()
     if exists('&foldmethod')
         if &foldenable
             setlocal nofoldenable
@@ -44,7 +44,7 @@ endfunction
 "-----------------------------------------------------------------------
 " tabs/spaces expanding toggle function.
 "-----------------------------------------------------------------------
-function! util#self#TabSpaceToggle()
+function! utils#self#TabSpaceToggle()
     if &expandtab
         set noexpandtab
         echomsg "Tab Expanded"
@@ -59,7 +59,7 @@ endfunction
 "-----------------------------------------------------------------------
 " tabs/spaces expanding toggle function.
 "-----------------------------------------------------------------------
-function! util#self#setFileRetab()
+function! utils#self#setFileRetab()
     let l:filename = getreg('%')
     try
         if filewritable(l:filename) && (match(l:filename, '.*udi_.*') == -1)
@@ -158,7 +158,7 @@ endfunction
 " function/struct array name string match pattern.
 let s:funcNamePattern = "^[^ \t#{/]\\{2}.*[^:]\s*$"
 " return current function name/struct array name for C source code.
-function! util#self#CShowCurFuncName()
+function! utils#self#CShowCurFuncName()
     if &filetype == 'c'
         let l:blkBraceSum = 0
         let l:funcNameLineNumber = search(s:funcNamePattern, 'bWn')
@@ -201,7 +201,7 @@ endfunction
 "-----------------------------------------------------------------------
 " Horizontally narrow windows.
 "-----------------------------------------------------------------------
-function! util#self#HoriNarrowWindow()
+function! utils#self#HoriNarrowWindow()
     let l:resizeCmd = ':resize -'.v:count1
     exec l:resizeCmd
 endfunction
@@ -210,7 +210,7 @@ endfunction
 "-----------------------------------------------------------------------
 " Horizontally enlarge windows.
 "-----------------------------------------------------------------------
-function! util#self#HoriEnlargeWindow()
+function! utils#self#HoriEnlargeWindow()
     let l:resizeCmd = ':resize +'.v:count1
     exec l:resizeCmd
 endfunction
@@ -219,7 +219,7 @@ endfunction
 "-----------------------------------------------------------------------
 " Vertically narrow window.
 "-----------------------------------------------------------------------
-function! util#self#VertNarrowWindow()
+function! utils#self#VertNarrowWindow()
     let l:resizeCmd = ':vertical resize -'.v:count1
     exec l:resizeCmd
 endfunction
@@ -228,7 +228,7 @@ endfunction
 "-----------------------------------------------------------------------
 " Vertically enlarge window.
 "-----------------------------------------------------------------------
-function! util#self#VertEnlargeWindow()
+function! utils#self#VertEnlargeWindow()
     let l:resizeCmd = ':vertical resize +'.v:count1
     exec l:resizeCmd
 endfunction
@@ -237,7 +237,7 @@ endfunction
 "-----------------------------------------------------------------------
 " Map alt (normaly <Esc>) key as modifier key.
 "-----------------------------------------------------------------------
-function! util#self#TerminalMapAltKey()
+function! utils#self#TerminalMapAltKey()
     if !has('nvim')
         " set alt key combined with a-z, A-Z
         for ascval in range(65, 90) + range(97, 122)
@@ -252,7 +252,7 @@ endfunction
 "-----------------------------------------------------------------------
 " Set go to previous window on closing quickfix window.
 "-----------------------------------------------------------------------
-function! util#self#OnPressEsc()
+function! utils#self#OnPressEsc()
     " Close quickfix window
     let l:winnrs = winnr('$')
     for winnr in range(1, l:winnrs)
@@ -277,7 +277,7 @@ endfunction
 "-----------------------------------------------------------------------
 " Strip some setting that to open big file quickly.
 "-----------------------------------------------------------------------
-function! util#self#OpenLargeFile()
+function! utils#self#OpenLargeFile()
     " save memory when other file is viewed
     setlocal bufhidden=unload
     " is read-only (write with :w new_filename)
@@ -298,7 +298,7 @@ endfunction
 "-----------------------------------------------------------------------
 " On switch to a new tabpage, TabNew event triggered.
 "-----------------------------------------------------------------------
-function! util#self#SwitchTabWin()
+function! utils#self#SwitchTabWin()
     let curwinid = win_getid()
     let curtab = tabpagenr()
     let bufwinidlist = win_findbuf(bufnr())
@@ -347,7 +347,7 @@ endfunction
 "-----------------------------------------------------------------------
 " On openning quickfix window.
 "-----------------------------------------------------------------------
-function! util#self#SetQuickfixOpen()
+function! utils#self#SetQuickfixOpen()
     exec "botright copen"
     nnoremap <silent> <buffer> h  <C-W><CR><C-w>K
     nnoremap <silent> <buffer> H  <C-W><CR><C-w>K<C-w>b
