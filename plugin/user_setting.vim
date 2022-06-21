@@ -33,16 +33,10 @@ nnoremap <silent> <Leader>t :call util#self#TabSpaceToggle()<cr>
 
 
 "-----------------------------------------------------------------------
-" add cscope/ctags database for autotest script.
-"-----------------------------------------------------------------------
-"autocmd BufRead,BufNewFile  *.spk,*.inc,*.def,*.cfg,*.slot :call util#explugin#AddCscopeDatabase()
-
-
-"-----------------------------------------------------------------------
 " BufReadPost event hanlder.
 "-----------------------------------------------------------------------
 augroup JumpLastCursor
-    au!
+    autocmd!
     autocmd BufReadPost *   :call util#onevent#BufReadPost()
 augroup END
 
@@ -103,7 +97,7 @@ endif
 " filetype detect and settings.
 "-----------------------------------------------------------------------
 augroup DetectFiletype
-    au!
+    autocmd!
     autocmd FileType php,ruby           setlocal tabstop=2 shiftwidth=2 softtabstop=2 | setlocal expandtab smarttab
     autocmd FileType coffee,javascript  setlocal tabstop=2 shiftwidth=2 softtabstop=2 | setlocal noexpandtab smarttab
     autocmd FileType html,htmldjango,xhtml,haml,css setlocal tabstop=2 shiftwidth=2 softtabstop=2 | setlocal noexpandtab smarttab
@@ -254,13 +248,22 @@ nmap <silent> <Leader>h :exe "help " . expand("<cword>")<cr>
 "-----------------------------------------------------------------------
 " Windows WSL clipboard support.
 "-----------------------------------------------------------------------
-let s:win_clip = '/mnt/c/Windows/System32/clip.exe'  " change this path according to your mount point
+let s:win_clip = get(g:, 'win_clip', '/mnt/c/Windows/System32/clip.exe')
 if executable(s:win_clip)
     augroup WSLYank
         autocmd!
         autocmd TextYankPost * if v:event.operator ==# 'y' | call system(s:win_clip, @0) | endif
     augroup END
 endif
+
+
+"-----------------------------------------------------------------------
+" Open in readonly mode when swapfile detected.
+"-----------------------------------------------------------------------
+augroup ViewWithSwap
+    autocmd!
+    autocmd SwapExists * let v:swapchoice = "o"
+augroup END
 
 
 "-----------------------------------------------------------------------
