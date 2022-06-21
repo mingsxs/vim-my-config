@@ -51,14 +51,20 @@ function! winloc#winloc#OnCloseWin()
     endwhile
 endfunction
 
-" update the jump fifo after entering window.
+" add new window ID
 function! winloc#winloc#OnWinNew()
     if !get(g:, 'winloc_enable', 0)
         return
     endif
-    " add new window id
     call add(s:windows, win_getid())
-    if !s:winloc_switch
+endfunction
+
+" update the jump fifo after entering window.
+function! winloc#winloc#OnWinEnter()
+    if !get(g:, 'winloc_enable', 0)
+        return
+    endif
+    if !s:winloc_switch && s:winloc_fifo[-1] != win_getid()
         if len(s:winloc_fifo) >= get(g:, 'winloc_fifo_len', 10)
             let s:winloc_fifo = s:winloc_fifo[1:]
         endif

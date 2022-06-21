@@ -265,8 +265,9 @@ augroup END
 let g:winloc_enable = 1     " enable winloc
 augroup Winloc
     autocmd!
-    autocmd WinNew * :call winloc#winloc#OnWinNew()
-    autocmd QuitPre * :call winloc#winloc#OnCloseWin()
+    autocmd WinNew *    :call winloc#winloc#OnWinNew()
+    autocmd WinEnter *  :call winloc#winloc#OnWinEnter()
+    autocmd QuitPre *   :call winloc#winloc#OnCloseWin()
 augroup END
 nnoremap <silent> <Leader>i :call winloc#winloc#JumpWinloc('next')<CR>
 nnoremap <silent> <Leader>o :call winloc#winloc#JumpWinloc('prev')<CR>
