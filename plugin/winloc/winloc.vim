@@ -64,7 +64,7 @@ function! winloc#winloc#OnWinEnter()
     if !get(g:, 'winloc_enable', 0)
         return
     endif
-    if !s:winloc_switch && s:winloc_fifo[-1] != win_getid()
+    if !s:winloc_switch && !empty(s:winloc_fifo) && s:winloc_fifo[-1] != win_getid()
         if len(s:winloc_fifo) >= get(g:, 'winloc_fifo_len', 10)
             let s:winloc_fifo = s:winloc_fifo[1:]
         endif

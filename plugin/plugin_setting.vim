@@ -357,6 +357,7 @@ let g:gutentags_trace = 0
 nnoremap <silent> <leader>ff :Files<cr>
 nnoremap <silent> <leader>gf :GFiles<cr>
 
+
 "-----------------------------------------------------------------------
 " Plugin Settings: vim-rooter.
 "-----------------------------------------------------------------------
@@ -364,3 +365,13 @@ let g:rooter_patterns = ['.git', '.svn', '.hg', '.bzr', '_darcs', '.root']
 if exists(":lcd")
     let g:rooter_cd_cmd = 'lcd'
 endif
+
+
+"-----------------------------------------------------------------------
+" Plugin Settings: vim-sneak.
+"-----------------------------------------------------------------------
+let g:sneak#label = 0           " disable label mode
+let g:sneak#use_ic_scs = 1      " use ignorecase/smartcase setting
+let g:sneak#s_next = 1          " like clever-f
+map <silent> f <Plug>Sneak_s
+map <silent> F <Plug>Sneak_S
