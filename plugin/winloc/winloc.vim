@@ -82,18 +82,11 @@ function! winloc#winloc#JumpWinloc(direction) abort
     " enable switch flag
     let s:winloc_switch = 1
     let curwinid = win_getid()
+    let locfifolen = len(s:winloc_cursor)
     if a:direction == 'prev'
-        if v:count1 <= s:winloc_cursor
-            let s:winloc_cursor -= v:count1
-        else
-            let s:winloc_cursor = 0
-        endif
+        let s:winloc_cursor = v:count1 <= s:winloc_cursor ? s:winloc_cursor - v:count1 : 0
     else
-        if s:winloc_cursor + v:count1 < len(s:winloc_fifo)
-            let s:winloc_cursor += v:count1
-        else
-            let s:winloc_cursor = len(s:winloc_fifo) - 1
-        endif
+        let s:winloc_cursor = (s:winloc_cursor + v:count1) < locfifolen ? s:winloc_cursor + v:count1 : locfifolen - 1
     endif
 
     let nextwinid = s:winloc_fifo[s:winloc_cursor]
