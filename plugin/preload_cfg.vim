@@ -1,9 +1,9 @@
-"----------------------------------------------------
-" This file contains all the plugin related settings|
-" and key mappings.                                 |
-" Date: 2019/05/24                                  |
-" Author: Ming Li (adagio.ming@gmail.com)           |
-"----------------------------------------------------
+"------------------------------------------------------------
+" This file contains all the configs which will be loaded   |
+" prior to loading other plugins.                           |
+" Date Create: 2019/05/24                                   |
+" Author: Ming Li (adagio.ming@gmail.com)                   |
+"------------------------------------------------------------
 
 "-----------------------------------------------------------------------
 " Plugin Settings: Tagbar.
@@ -244,16 +244,6 @@ let g:airline_exclude_preview = 1
 
 " cache highlighting, faster.
 let g:airline_highlighting_cache = 1
-
-function! ShowWinNumber(...)
-    let builder = a:1
-    let context = a:2
-    call builder.add_section('airline_b', '%{tabpagewinnr(tabpagenr())}')
-    return 0
-endfunction
-
-call airline#add_statusline_func('ShowWinNumber')
-call airline#add_inactive_statusline_func('ShowWinNumber')
 
 
 "-----------------------------------------------------------------------

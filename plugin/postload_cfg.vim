@@ -1,10 +1,10 @@
 
-"----------------------------------------------------
-" This file contains self-defined mappings and some |
-" useful auto-settings.                             |
-" Date: 2019/05/24                                  |
-" Author: Ming Li (adagio.ming@gmail.com)           |
-"----------------------------------------------------
+"------------------------------------------------------------
+" This file contains all the configs which will be loaded   |
+" after other plugins get loaded.                           |
+" Date Create: 2019/05/24                                   |
+" Author: Ming Li (adagio.ming@gmail.com)                   |
+"------------------------------------------------------------
 
 
 "-----------------------------------------------------------------------
@@ -285,3 +285,17 @@ nnoremap <silent> <Leader>6 :6wincmd w<CR>
 nnoremap <silent> <Leader>7 :7wincmd w<CR>
 nnoremap <silent> <Leader>8 :8wincmd w<CR>
 nnoremap <silent> <Leader>9 :9wincmd w<CR>
+
+
+"-----------------------------------------------------------------------
+" Airline tabline show window number.
+"-----------------------------------------------------------------------
+function! ShowWinNumber(...)
+    let builder = a:1
+    let context = a:2
+    call builder.add_section('airline_b', '%{tabpagewinnr(tabpagenr())}')
+    return 0
+endfunction
+
+call airline#add_statusline_func('ShowWinNumber')
+call airline#add_inactive_statusline_func('ShowWinNumber')
