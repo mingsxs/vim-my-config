@@ -8,36 +8,36 @@
 "-----------------------------------------------------------------------
 " Plugin Settings: Tagbar.
 "-----------------------------------------------------------------------
-let g:tagbar_right=1
-let g:tagbar_width=30
-let g:tagbar_autofocus = 1
-let g:tagbar_sort = 0
-let g:tagbar_compact = 1
-if executable('coffeetags')  " configure coffee tag.
-  let g:tagbar_type_coffee = {
-        \ 'ctagsbin' : 'coffeetags',
-        \ 'ctagsargs' : '',
-        \ 'kinds' : [
-        \ 'f:functions',
-        \ 'o:object',
-        \ ],
-        \ 'sro' : ".",
-        \ 'kind2scope' : {
-        \ 'f' : 'object',
-        \ 'o' : 'object',
-        \ }
-        \ }
-
-  let g:tagbar_type_markdown = {
-    \ 'ctagstype' : 'markdown',
-    \ 'sort' : 0,
-    \ 'kinds' : [
-        \ 'h:sections'
-    \ ]
-    \ }
-endif
-
-nmap <Leader>T :TagbarToggle<cr>
+"let g:tagbar_right=1
+"let g:tagbar_width=30
+"let g:tagbar_autofocus = 1
+"let g:tagbar_sort = 0
+"let g:tagbar_compact = 1
+"if executable('coffeetags')  " configure coffee tag.
+"  let g:tagbar_type_coffee = {
+"        \ 'ctagsbin' : 'coffeetags',
+"        \ 'ctagsargs' : '',
+"        \ 'kinds' : [
+"        \ 'f:functions',
+"        \ 'o:object',
+"        \ ],
+"        \ 'sro' : ".",
+"        \ 'kind2scope' : {
+"        \ 'f' : 'object',
+"        \ 'o' : 'object',
+"        \ }
+"        \ }
+"
+"  let g:tagbar_type_markdown = {
+"    \ 'ctagstype' : 'markdown',
+"    \ 'sort' : 0,
+"    \ 'kinds' : [
+"        \ 'h:sections'
+"    \ ]
+"    \ }
+"endif
+"
+"nmap <Leader>T :TagbarToggle<cr>
 
 
 "-----------------------------------------------------------------------
@@ -373,5 +373,8 @@ endif
 let g:sneak#label = 0           " disable label mode
 let g:sneak#use_ic_scs = 1      " use ignorecase/smartcase setting
 let g:sneak#s_next = 1          " like clever-f
-map <silent> f <Plug>Sneak_s
-map <silent> F <Plug>Sneak_S
+" map f,F,t,T jump
+map <silent> f <Plug>Sneak_f
+map <silent> F <Plug>Sneak_F
+map <silent> t <Plug>Sneak_t
+map <silent> T <Plug>Sneak_T

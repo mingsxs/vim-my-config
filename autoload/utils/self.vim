@@ -77,7 +77,7 @@ if !exists('s:cInString')
     let s:cInString = 0
 endif
 " parse one line of C code to know if it's inside function/struct array.
-function s:get_line_brace(line, lastLine)
+function s:get_line_brace(line, lastLine) abort
     let l:lineBraceSum = 0
     let l:cIndex = 0
     let l:stringLength = strlen(a:line)
@@ -110,7 +110,7 @@ function s:get_line_brace(line, lastLine)
 endfunction
 
 " trim string by character * and ( ).
-function s:trim_str(line)
+function s:trim_str(line) abort
     let l:headPos = 0
     let l:tailPos = strlen(a:line) - 1
     let l:cHeadValid = 0
@@ -137,7 +137,7 @@ function s:trim_str(line)
 endfunction
 
 " get head brace index.
-function s:get_head_brace_index(line)
+function s:get_head_brace_index(line) abort
     let l:cIndex = strlen(a:line) - 1
     let l:lineHeadBraceIndex = 0
     let l:parenthesisFound = 0
@@ -158,7 +158,7 @@ endfunction
 " function/struct array name string match pattern.
 let s:funcNamePattern = "^[^ \t#{/]\\{2}.*[^:]\s*$"
 " return current function name/struct array name for C source code.
-function! utils#self#CShowCurFuncName()
+function! utils#self#CShowCurFuncName() abort
     if &filetype == 'c'
         let l:blkBraceSum = 0
         let l:funcNameLineNumber = search(s:funcNamePattern, 'bWn')
@@ -237,7 +237,7 @@ endfunction
 "-----------------------------------------------------------------------
 " Map alt (normaly <Esc>) key as modifier key.
 "-----------------------------------------------------------------------
-function! utils#self#TerminalMapAltKey()
+function! utils#self#TerminalMapAltKey() abort
     if !has('nvim')
         " set alt key combined with a-z, A-Z
         for ascval in range(65, 90) + range(97, 122)
@@ -252,7 +252,7 @@ endfunction
 "-----------------------------------------------------------------------
 " Set go to previous window on closing quickfix window.
 "-----------------------------------------------------------------------
-function! utils#self#OnPressEsc()
+function! utils#self#OnPressEsc() abort
     " Close quickfix window
     let l:winnrs = winnr('$')
     for winnr in range(1, l:winnrs)
@@ -298,7 +298,7 @@ endfunction
 "-----------------------------------------------------------------------
 " On switch to a new tabpage, TabNew event triggered.
 "-----------------------------------------------------------------------
-function! utils#self#SwitchTabWin()
+function! utils#self#SwitchTabWin() abort
     let curwinid = win_getid()
     let curtab = tabpagenr()
     let bufwinidlist = win_findbuf(bufnr())

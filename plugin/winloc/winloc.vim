@@ -27,8 +27,8 @@ let s:winloc_switch = 0
 "endfunction
 
 " remove window ID from fifo once some opened window is closed.
-function! winloc#winloc#OnCloseWin()
-    if !get(g:, 'winloc_enable', 0)
+function! winloc#winloc#OnCloseWin() abort
+    if !get(g:, 'winloc_enable', 0) || empty(s:winloc_fifo)
         return
     endif
 
@@ -52,7 +52,7 @@ function! winloc#winloc#OnCloseWin()
 endfunction
 
 " add new window ID
-function! winloc#winloc#OnWinNew()
+function! winloc#winloc#OnWinNew() abort
     if !get(g:, 'winloc_enable', 0)
         return
     endif
@@ -60,11 +60,11 @@ function! winloc#winloc#OnWinNew()
 endfunction
 
 " update the jump fifo after entering window.
-function! winloc#winloc#OnWinEnter()
-    if !get(g:, 'winloc_enable', 0)
+function! winloc#winloc#OnWinEnter() abort
+    if !get(g:, 'winloc_enable', 0) || empty(s:winloc_fifo)
         return
     endif
-    if !s:winloc_switch && !empty(s:winloc_fifo) && s:winloc_fifo[-1] != win_getid()
+    if !s:winloc_switch && s:winloc_fifo[-1] != win_getid()
         if len(s:winloc_fifo) >= get(g:, 'winloc_fifo_len', 10)
             let s:winloc_fifo = s:winloc_fifo[1:]
         endif
@@ -74,8 +74,8 @@ function! winloc#winloc#OnWinEnter()
 endfunction
 
 " jump across winloc fifo
-function! winloc#winloc#JumpWinloc(direction)
-    if !get(g:, 'winloc_enable', 0)
+function! winloc#winloc#JumpWinloc(direction) abort
+    if !get(g:, 'winloc_enable', 0) || empty(s:winloc_fifo)
         return
     endif
 
