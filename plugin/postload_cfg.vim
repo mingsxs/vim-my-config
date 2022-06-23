@@ -262,12 +262,11 @@ augroup END
 "-----------------------------------------------------------------------
 " Set up winloc plugin.
 "-----------------------------------------------------------------------
-let g:winloc_enable = 1     " enable winloc
+let g:winloc_enable = has('nvim')     " enable winloc with nvim
 augroup Winloc
     autocmd!
-    autocmd WinNew *    :call winloc#winloc#OnWinNew()
     autocmd WinEnter *  :call winloc#winloc#OnWinEnter()
-    autocmd QuitPre *   :call winloc#winloc#OnCloseWin()
+    autocmd WinClosed * :call winloc#winloc#OnWinClose()
 augroup END
 nnoremap <silent> <Leader>i :call winloc#winloc#JumpWinloc('next')<CR>
 nnoremap <silent> <Leader>o :call winloc#winloc#JumpWinloc('prev')<CR>
