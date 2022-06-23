@@ -1,2 +1,3 @@
 # vim-my-config
-My Vim config settings for auto plugin syncing.
+My vim configurations and settings.
+Should support both nvim & vim, on platform `win32` & `linux`.
