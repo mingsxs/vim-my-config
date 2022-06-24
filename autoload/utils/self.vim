@@ -199,38 +199,22 @@ endfunction
 
 
 "-----------------------------------------------------------------------
-" Horizontally narrow windows.
+" Window size adjustment both vertically and horizontally.
 "-----------------------------------------------------------------------
-function! utils#self#HoriNarrowWindow()
-    let l:resizeCmd = ':resize -'.v:count1
-    exec l:resizeCmd
-endfunction
-
-
-"-----------------------------------------------------------------------
-" Horizontally enlarge windows.
-"-----------------------------------------------------------------------
-function! utils#self#HoriEnlargeWindow()
-    let l:resizeCmd = ':resize +'.v:count1
-    exec l:resizeCmd
-endfunction
-
-
-"-----------------------------------------------------------------------
-" Vertically narrow window.
-"-----------------------------------------------------------------------
-function! utils#self#VertNarrowWindow()
-    let l:resizeCmd = ':vertical resize -'.v:count1
-    exec l:resizeCmd
-endfunction
-
-
-"-----------------------------------------------------------------------
-" Vertically enlarge window.
-"-----------------------------------------------------------------------
-function! utils#self#VertEnlargeWindow()
-    let l:resizeCmd = ':vertical resize +'.v:count1
-    exec l:resizeCmd
+function! utils#self#AdjustWindowSize(scale, action)
+    if a:scale == 'horizontal'
+        if a:action == 'less'
+            exec 'resize -'.v:count1
+        else
+            exec 'resize +'.v:count1
+        endif
+    else
+        if a:action == 'less'
+            exec 'vertical resize -'.v:count1
+        else
+            exec 'vertical resize +'.v:count1
+        endif
+    endif
 endfunction
 
 

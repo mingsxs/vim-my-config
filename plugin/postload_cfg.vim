@@ -298,3 +298,17 @@ endfunction
 
 call airline#add_statusline_func('ShowWinNumber')
 call airline#add_inactive_statusline_func('ShowWinNumber')
+
+
+"-----------------------------------------------------------------------
+" Easy window size adjustment.
+"-----------------------------------------------------------------------
+" Vertically narrow window, eg: 20<Leader>-.
+nnoremap <silent> _ :<C-U>call utils#self#AdjustWindowSize("vertical", "less")<cr>
+" Vertically enlarge window, eg: 20<Leader>=.
+nnoremap <silent> + :<C-U>call utils#self#AdjustWindowSize("vertical", "more")<cr>
+" Horizontally narrow window. eg: shift - -.
+nnoremap <silent> <Leader>- :<C-U>call utils#self#AdjustWindowSize("horizontal", "less")<cr>
+" Horizontally enlarge window. eg: shift - +.
+nnoremap <silent> <Leader>= :<C-U>call utils#self#AdjustWindowSize("horizontal", "more")<cr>
+
