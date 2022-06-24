@@ -268,8 +268,8 @@ augroup Winloc
     autocmd WinEnter *  :call winloc#winloc#OnWinEnter()
     autocmd WinClosed * :call winloc#winloc#OnWinClose()
 augroup END
-nnoremap <silent> <Leader>i :call winloc#winloc#JumpWinloc('next')<CR>
-nnoremap <silent> <Leader>o :call winloc#winloc#JumpWinloc('prev')<CR>
+nnoremap <silent> <M-i> :call winloc#winloc#JumpWinloc('next')<CR>
+nnoremap <silent> <M-o> :call winloc#winloc#JumpWinloc('prev')<CR>
 
 
 "-----------------------------------------------------------------------
