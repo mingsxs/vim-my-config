@@ -79,6 +79,10 @@ function! winloc#winloc#OnWinEnter() abort
         let curwin = win_getid()
         " append win id only if it's not the latest
         if get(s:winloc_fifo, -1) != curwin
+            " shift last window to winloc list end
+            let prevwin = s:winloc_fifo[s:winloc_cursor]
+            call remove(s:winloc_fifo, s:winloc_cursor)
+            call add(s:winloc_fifo, prevwin)
             if len(s:winloc_fifo) >= get(g:, 'winloc_fifo_len', 10)
                 let s:winloc_fifo = s:winloc_fifo[1:]
             endif
