@@ -55,8 +55,8 @@ endfunction
 " function to add current window to winloc fifo on WinEnter.
 function s:WinlocUpdateOnEnter(timer) abort
     " shift last window to winloc list end
-    if s:winloc_cursor >= 0 && s:winloc_cursor < len(s:winloc_fifo) - 1
-        let prevwin = s:winloc_fifo[s:winloc_cursor]
+    let prevwin = get(s:winloc_fifo, s:winloc_cursor)
+    if prevwin != 0 && prevwin != get(s:winloc_fifo, -1)
         call remove(s:winloc_fifo, s:winloc_cursor)
         while get(s:winloc_fifo, s:winloc_cursor) == get(s:winloc_fifo, s:winloc_cursor-1)
             call remove(s:winloc_fifo, s:winloc_cursor)
@@ -122,13 +122,18 @@ function! winloc#winloc#JumpWinloc(direction) abort
             let next_cursor = (s:winloc_cursor + v:count1) < len(s:winloc_fifo) ? s:winloc_cursor + v:count1 : -1
         endif
         if next_cursor == -1
-            echomsg "exceed winloc jump range"
+            echo "exceed winloc jump range"
         else
-            if s:winloc_fifo[next_cursor] != curwin
-                if win_gotoid(s:winloc_fifo[next_cursor])
+            let nextwin = get(s:winloc_fifo, next_cursor)
+            if nextwin != curwin
+                if win_gotoid(nextwin)
                     let s:winloc_cursor = next_cursor
                 else
-                    echomsg "Window ID .".s:winloc_fifo[next_cursor]." not found, do nothing"
+                    echomsg "Window ID .".nextwin." not found, do nothing"
+                    if nextwin != 0
+                        call remove(s:winloc_fifo, next_cursor)
+                    endif
+                    call s:WinlocUpdateOnEnter(0)
                 endif
             endif
         endif
