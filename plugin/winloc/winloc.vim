@@ -14,6 +14,7 @@ let s:winloc_fifo = [1000]
 let s:winloc_cursor = 0
 let s:winloc_update_timer = 0
 let s:winloc_switch = 0
+let s:winloc_skip_next_enter = 0
 
 " collect all opened window IDs as list
 function! s:GetAllWinIDs()
@@ -56,25 +57,41 @@ endfunction
 function s:WinlocUpdateOnEnter(timer) abort
     " shift last window to winloc list end
     let prevwin = get(s:winloc_fifo, s:winloc_cursor)
-    if prevwin != 0 && prevwin != get(s:winloc_fifo, -1)
-        call remove(s:winloc_fifo, s:winloc_cursor)
-        while get(s:winloc_fifo, s:winloc_cursor) == get(s:winloc_fifo, s:winloc_cursor-1)
+    let curwin = win_getid()
+    " not entering the previous window
+    if curwin != prevwin
+        if prevwin != 0 && prevwin != get(s:winloc_fifo, -1)
             call remove(s:winloc_fifo, s:winloc_cursor)
-        endwhile
-        call s:AppendWinloc(prevwin)
+            while get(s:winloc_fifo, s:winloc_cursor) == get(s:winloc_fifo, s:winloc_cursor-1)
+                call remove(s:winloc_fifo, s:winloc_cursor)
+            endwhile
+            call s:AppendWinloc(prevwin)
+        endif
+        " append win id only if it's not the latest
+        call s:AppendWinloc(curwin)
+        " point to the newest loc
+        let s:winloc_cursor = len(s:winloc_fifo) - 1
     endif
-    " append win id only if it's not the latest
-    call s:AppendWinloc(win_getid())
-    " point to the newest loc
-    let s:winloc_cursor = len(s:winloc_fifo) - 1
 endfunction
 
 " handler for updating winloc fifo on event #WinEnter with delay timer.
 " the default delay is 25 ms which can be specified with g:winloc_update_delay.
 function! winloc#winloc#OnWinEnter() abort
     if get(g:, 'winloc_enable', 0) && !s:winloc_switch
-        let prevwininfo = getwininfo(get(s:winloc_fifo, s:winloc_cursor))
-        if !empty(prevwininfo) && prevwininfo[0]['quickfix'] == 1
+        " check if previous window is a quickfix window
+        let isprevwinqf = 0
+        if s:winloc_skip_next_enter == 1
+            " previous quickfix window closed, handled by WinClosed event
+            let isprevwinqf = 1
+            let s:winloc_skip_next_enter = 0 " unset the flag for next set
+        else
+            " previous quickfix window still open
+            let prevwininfo = getwininfo(get(s:winloc_fifo, s:winloc_cursor))
+            if !empty(prevwininfo) && prevwininfo[0]['quickfix']
+                let isprevwinqf = 1
+            endif
+        endif
+        if isprevwinqf == 1
             if empty(timer_info(s:winloc_update_timer))
                 let l:WinlocUpdater = function('<SID>WinlocUpdateOnEnter')
                 call timer_stop(s:winloc_update_timer)
@@ -92,20 +109,27 @@ function! winloc#winloc#OnWinClose() abort
         " event WinClosed will store the closed Win-ID in <amatch> & <afile>
         let closed_win = str2nr(expand('<amatch>'))
         if index(s:winloc_fifo, closed_win) >= 0
-            " remove closed window and continuous window duplicates
-            let cursor = 1
-            while cursor < len(s:winloc_fifo)
-                while (get(s:winloc_fifo, cursor) == closed_win) ||
-                            \ (get(s:winloc_fifo, cursor) == get(s:winloc_fifo, cursor-1))
-                    call remove(s:winloc_fifo, cursor)
-                    if cursor < s:winloc_cursor
-                        let s:winloc_cursor -= 1
-                    elseif cursor == s:winloc_cursor
-                        let s:winloc_cursor = -1 " current window closed, winloc_cursor is floating now
-                    endif
+            if getwininfo(closed_win)[0]['quickfix'] && s:winloc_cursor > 0
+                " remove closed window and change window cursor to previous one for quickfix
+                call remove(s:winloc_fifo, s:winloc_cursor)
+                let s:winloc_cursor -= 1
+                let s:winloc_skip_next_enter = 1 " skip next WinEnter
+            else
+                " remove closed window and continuous window duplicates
+                let cursor = 1
+                while cursor < len(s:winloc_fifo)
+                    while (get(s:winloc_fifo, cursor) == closed_win) ||
+                                \ (get(s:winloc_fifo, cursor) == get(s:winloc_fifo, cursor-1))
+                        call remove(s:winloc_fifo, cursor)
+                        if cursor < s:winloc_cursor
+                            let s:winloc_cursor -= 1
+                        elseif cursor == s:winloc_cursor
+                            let s:winloc_cursor = -1 " current window closed, winloc_cursor is floating now
+                        endif
+                    endwhile
+                    let cursor += 1
                 endwhile
-                let cursor += 1
-            endwhile
+            endif
         endif
     endif
 endfunction
