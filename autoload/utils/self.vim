@@ -234,24 +234,25 @@ endfunction
 
 
 "-----------------------------------------------------------------------
-" Set go to previous window on closing quickfix window.
+" Close quickfix window or help window on pressing esc key.
 "-----------------------------------------------------------------------
 function! utils#self#OnPressEsc() abort
-    " Close quickfix window
+    " Close quickfix buffer window
     let l:winnrs = winnr('$')
     for winnr in range(1, l:winnrs)
         if getwinvar(winnr, '&ft') == 'qf'
             exec "cclose"
-            exec "winc p"
+            " close one window at a time
             return
         endif
     endfor
 
-    " Close help window
+    " Close help buffer window and none file buffer window
     for winnr in range(1, l:winnrs)
         let winft = getwinvar(winnr, '&ft')
         if winnrs > 1 && (empty(winft) || winft == 'help')
             exec winnr."quit"
+            " close one window at a time
             return
         endif
     endfor

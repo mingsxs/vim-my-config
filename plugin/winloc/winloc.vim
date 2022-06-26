@@ -14,7 +14,14 @@ let s:winloc_fifo = [1000]
 let s:winloc_cursor = 0
 let s:winloc_update_timer = 0
 let s:winloc_switch = 0
-let s:winloc_skip_next_enter = 0
+let s:winloc_redirect = 0
+
+" enable debug trace info
+function! s:EchoTrace(msg)
+    if get(g:, 'winloc_trace_enable', 0)
+        echomsg a:msg
+    endif
+endfunction
 
 " collect all opened window IDs as list
 function! s:GetAllWinIDs()
@@ -34,6 +41,7 @@ function! winloc#winloc#DebugShow()
     echomsg "winloc fifo length: ".get(g:, 'winloc_fifo_len', 'default-16')
     echomsg "winloc fifo: ".join(s:winloc_fifo, ', ')
     echomsg "winloc cursor: ".s:winloc_cursor
+    echomsg "winloc redirect flag:".s:winloc_redirect
 endfunction
 
 " add new window ID
@@ -42,6 +50,42 @@ endfunction
 "        call add(s:windows, win_getid())
 "    endif
 "endfunction
+
+" update winloc fifo after an opened window is closed.
+function! winloc#winloc#OnWinClose() abort
+    if get(g:, 'winloc_enable', 0)
+        " event WinClosed will store the closed Win-ID in <amatch> & <afile>
+        let closed_win = str2nr(expand('<amatch>'))
+        call s:EchoTrace("Closing Window:".closed_win)
+        if index(s:winloc_fifo, closed_win) >= 0
+            " remove closed window and continuous window duplicates
+            let cursor = 1
+            let closing_curwin = 0
+            while cursor < len(s:winloc_fifo)
+                while (get(s:winloc_fifo, cursor) == closed_win) ||
+                            \ (get(s:winloc_fifo, cursor) == get(s:winloc_fifo, cursor-1))
+                    call remove(s:winloc_fifo, cursor)
+                    if cursor < s:winloc_cursor
+                        let s:winloc_cursor -= 1
+                    elseif cursor == s:winloc_cursor
+                        let closing_curwin = 1
+                    endif
+                endwhile
+                let cursor += 1
+            endwhile
+            " currently opened quickfix window is closed
+            if closing_curwin &&
+                        \ win_gettype(closed_win) == 'quickfix'
+                call s:EchoTrace("skip the next WinEnter event")
+                let s:winloc_cursor -= 1
+                let s:winloc_redirect = 1
+            else
+                " set the cursor to floating state
+                let s:winloc_cursor = -1
+            endif
+        endif
+    endif
+endfunction
 
 " append new window id to the winloc fifo.
 function! s:AppendWinloc(winid) abort
@@ -78,20 +122,24 @@ endfunction
 " the default delay is 25 ms which can be specified with g:winloc_update_delay.
 function! winloc#winloc#OnWinEnter() abort
     if get(g:, 'winloc_enable', 0) && !s:winloc_switch
-        " check if previous window is a quickfix window
-        let isprevwinqf = 0
-        if s:winloc_skip_next_enter == 1
-            " previous quickfix window closed, handled by WinClosed event
-            let isprevwinqf = 1
-            let s:winloc_skip_next_enter = 0 " unset the flag for next set
-        else
-            " previous quickfix window still open
-            let prevwininfo = getwininfo(get(s:winloc_fifo, s:winloc_cursor))
-            if !empty(prevwininfo) && prevwininfo[0]['quickfix']
-                let isprevwinqf = 1
+        " redirect window
+        if s:winloc_redirect
+            let s:winloc_redirect = 0
+            let prevwin = get(s:winloc_fifo, s:winloc_cursor)
+            call s:EchoTrace("redirect window to:".prevwin)
+            if !empty(getwininfo(get(s:winloc_fifo, s:winloc_cursor)))
+                " do fake autocmds
+                doautocmd BufLeave *
+                doautocmd WinLeave *
+                doautocmd TabLeave *
+                call win_gotoid(get(s:winloc_fifo, s:winloc_cursor))
+                return
             endif
         endif
-        if isprevwinqf == 1
+        call s:EchoTrace("Entering Window:".win_getid())
+        " previous quickfix window still open
+        if win_gettype(get(s:winloc_fifo, s:winloc_cursor)) == 'quickfix'
+            call s:EchoTrace("from opened quickfix window")
             if empty(timer_info(s:winloc_update_timer))
                 let l:WinlocUpdater = function('<SID>WinlocUpdateOnEnter')
                 call timer_stop(s:winloc_update_timer)
@@ -99,37 +147,6 @@ function! winloc#winloc#OnWinEnter() abort
             endif
         else
             call s:WinlocUpdateOnEnter(0)
-        endif
-    endif
-endfunction
-
-" update winloc fifo after an opened window is closed.
-function! winloc#winloc#OnWinClose() abort
-    if get(g:, 'winloc_enable', 0)
-        " event WinClosed will store the closed Win-ID in <amatch> & <afile>
-        let closed_win = str2nr(expand('<amatch>'))
-        if index(s:winloc_fifo, closed_win) >= 0
-            if getwininfo(closed_win)[0]['quickfix'] && s:winloc_cursor > 0
-                " remove closed window and change window cursor to previous one for quickfix
-                call remove(s:winloc_fifo, s:winloc_cursor)
-                let s:winloc_cursor -= 1
-                let s:winloc_skip_next_enter = 1 " skip next WinEnter
-            else
-                " remove closed window and continuous window duplicates
-                let cursor = 1
-                while cursor < len(s:winloc_fifo)
-                    while (get(s:winloc_fifo, cursor) == closed_win) ||
-                                \ (get(s:winloc_fifo, cursor) == get(s:winloc_fifo, cursor-1))
-                        call remove(s:winloc_fifo, cursor)
-                        if cursor < s:winloc_cursor
-                            let s:winloc_cursor -= 1
-                        elseif cursor == s:winloc_cursor
-                            let s:winloc_cursor = -1 " current window closed, winloc_cursor is floating now
-                        endif
-                    endwhile
-                    let cursor += 1
-                endwhile
-            endif
         endif
     endif
 endfunction
