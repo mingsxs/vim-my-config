@@ -1,9 +1,10 @@
 " check for vim event support.
-if !(exists('##WinEnter') &&
+if !(has('timers') &&
+            \ exists('##WinEnter') &&
             \ exists('##WinLeave') &&
             \ exists('##WinNew') &&
             \ exists('##WinClosed'))
-    echomsg "Error: winloc requires events #WinEnter, #WinLeave, #WinNew and #WinClosed supported."
+    echomsg "Error: winloc requires feature `timers` and events #WinEnter, #WinLeave, #WinNew and #WinClosed support."
     finish
 endif
 
@@ -11,6 +12,7 @@ endif
 "let s:windows = [1000]
 let s:winloc_fifo = [1000]
 let s:winloc_cursor = 0
+let s:winloc_update_timer = 0
 let s:winloc_switch = 0
 
 " collect all opened window IDs as list
@@ -28,7 +30,7 @@ endfunction
 
 function! winloc#winloc#DebugShow()
     echomsg "window ids all:".join(s:GetAllWinIDs(), ', ')
-    echomsg "winloc fifo length: ".get(g:, 'winloc_fifo_len', 'default-10')
+    echomsg "winloc fifo length: ".get(g:, 'winloc_fifo_len', 'default-16')
     echomsg "winloc fifo: ".join(s:winloc_fifo, ', ')
     echomsg "winloc cursor: ".s:winloc_cursor
 endfunction
@@ -42,47 +44,64 @@ endfunction
 
 " append new window id to the winloc fifo.
 function! s:AppendWinloc(winid) abort
-    if get(s:winloc_fifo, -1) != a:winid && win_id2tabwin(a:winid) != [0, 0]
+    if get(s:winloc_fifo, -1) != a:winid && !empty(getwininfo(a:winid))
         call add(s:winloc_fifo, a:winid)
-        if len(s:winloc_fifo) > get(g:, 'winloc_fifo_len', 10)
+        if len(s:winloc_fifo) > get(g:, 'winloc_fifo_len', 16)
             let s:winloc_fifo = s:winloc_fifo[1:]
         endif
     endif
 endfunction
 
-" update the jump fifo after entering window.
+" function to add current window to winloc fifo on WinEnter.
+function s:WinlocUpdateOnEnter(timer) abort
+    " shift last window to winloc list end
+    if s:winloc_cursor >= 0 && s:winloc_cursor < len(s:winloc_fifo) - 1
+        let prevwin = s:winloc_fifo[s:winloc_cursor]
+        call remove(s:winloc_fifo, s:winloc_cursor)
+        while get(s:winloc_fifo, s:winloc_cursor) == get(s:winloc_fifo, s:winloc_cursor-1)
+            call remove(s:winloc_fifo, s:winloc_cursor)
+        endwhile
+        call s:AppendWinloc(prevwin)
+    endif
+    " append win id only if it's not the latest
+    call s:AppendWinloc(win_getid())
+    " point to the newest loc
+    let s:winloc_cursor = len(s:winloc_fifo) - 1
+endfunction
+
+" handler for updating winloc fifo on event #WinEnter with delay timer.
+" the default delay is 25 ms which can be specified with g:winloc_update_delay.
 function! winloc#winloc#OnWinEnter() abort
     if get(g:, 'winloc_enable', 0) && !s:winloc_switch
-        " shift last window to winloc list end
-        if s:winloc_cursor < len(s:winloc_fifo) - 1
-            let prevwin = s:winloc_fifo[s:winloc_cursor]
-            call remove(s:winloc_fifo, s:winloc_cursor)
-            while get(s:winloc_fifo, s:winloc_cursor) == get(s:winloc_fifo, s:winloc_cursor-1)
-                call remove(s:winloc_fifo, s:winloc_cursor)
-            endwhile
-            call s:AppendWinloc(prevwin)
+        let prevwininfo = getwininfo(get(s:winloc_fifo, s:winloc_cursor))
+        if !empty(prevwininfo) && prevwininfo[0]['quickfix'] == 1
+            if empty(timer_info(s:winloc_update_timer))
+                let l:WinlocUpdater = function('<SID>WinlocUpdateOnEnter')
+                call timer_stop(s:winloc_update_timer)
+                let s:winloc_update_timer = timer_start(get(g:, 'winloc_update_delay', 25), l:WinlocUpdater, {'repeat': 1})
+            endif
+        else
+            call s:WinlocUpdateOnEnter(0)
         endif
-        " append win id only if it's not the latest
-        call s:AppendWinloc(win_getid())
-        " point to the newest loc
-        let s:winloc_cursor = len(s:winloc_fifo) - 1
     endif
 endfunction
 
-" remove window ID from fifo after an opened window is closed.
+" update winloc fifo after an opened window is closed.
 function! winloc#winloc#OnWinClose() abort
     if get(g:, 'winloc_enable', 0)
         " event WinClosed will store the closed Win-ID in <amatch> & <afile>
         let closed_win = str2nr(expand('<amatch>'))
         if index(s:winloc_fifo, closed_win) >= 0
-            " remove closed window and continued window duplicates
+            " remove closed window and continuous window duplicates
             let cursor = 1
             while cursor < len(s:winloc_fifo)
                 while (get(s:winloc_fifo, cursor) == closed_win) ||
                             \ (get(s:winloc_fifo, cursor) == get(s:winloc_fifo, cursor-1))
                     call remove(s:winloc_fifo, cursor)
-                    if cursor <= s:winloc_cursor
+                    if cursor < s:winloc_cursor
                         let s:winloc_cursor -= 1
+                    elseif cursor == s:winloc_cursor
+                        let s:winloc_cursor = -1 " current window closed, winloc_cursor is floating now
                     endif
                 endwhile
                 let cursor += 1
@@ -103,7 +122,7 @@ function! winloc#winloc#JumpWinloc(direction) abort
             let next_cursor = (s:winloc_cursor + v:count1) < len(s:winloc_fifo) ? s:winloc_cursor + v:count1 : -1
         endif
         if next_cursor == -1
-            echomsg "invalid winloc jump range"
+            echomsg "exceed winloc jump range"
         else
             if s:winloc_fifo[next_cursor] != curwin
                 if win_gotoid(s:winloc_fifo[next_cursor])
