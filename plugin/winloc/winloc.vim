@@ -53,9 +53,10 @@ endfunction
 
 " update winloc fifo after an opened window is closed.
 function! winloc#winloc#OnWinClose() abort
-    if get(g:, 'winloc_enable', 0)
-        " event WinClosed will store the closed Win-ID in <amatch> & <afile>
-        let closed_win = str2nr(expand('<amatch>'))
+    " event WinClosed will store the closed Win-ID in <amatch> & <afile>
+    let closed_win = str2nr(expand('<amatch>'))
+    let wt = win_gettype(closed_win)
+    if get(g:, 'winloc_enable', 0) && (empty(wt) || wt == 'quickfix')
         call s:EchoTrace("Closing Window:".closed_win)
         if index(s:winloc_fifo, closed_win) >= 0
             " remove closed window and continuous window duplicates
@@ -77,7 +78,7 @@ function! winloc#winloc#OnWinClose() abort
             " a WinEnter event will be triggered soon
             if closing_curwin
                 call s:EchoTrace("Closing current window")
-                if win_gettype(closed_win) == 'quickfix'
+                if wt == 'quickfix'
                     call s:EchoTrace("skip the next WinEnter event")
                     let s:winloc_cursor -= 1
                     let s:winloc_redirect = 1
@@ -124,11 +125,12 @@ endfunction
 " handler for updating winloc fifo on event #WinEnter with delay timer.
 " the default delay is 25 ms which can be specified with g:winloc_update_delay.
 function! winloc#winloc#OnWinEnter() abort
-    if get(g:, 'winloc_enable', 0) && !s:winloc_switch
+    let wt = win_gettype()
+    if get(g:, 'winloc_enable', 0) && !s:winloc_switch && (empty(wt) || wt == 'quickfix')
+        let prevwin = get(s:winloc_fifo, s:winloc_cursor)
         " redirect window
         if s:winloc_redirect
             let s:winloc_redirect = 0
-            let prevwin = get(s:winloc_fifo, s:winloc_cursor)
             call s:EchoTrace("redirect window to:".prevwin)
             if !empty(getwininfo(get(s:winloc_fifo, s:winloc_cursor)))
                 " do fake autocmds
@@ -141,7 +143,7 @@ function! winloc#winloc#OnWinEnter() abort
         endif
         call s:EchoTrace("Entering Window:".win_getid())
         " previous quickfix window still open
-        if win_gettype(get(s:winloc_fifo, s:winloc_cursor)) == 'quickfix'
+        if win_gettype(prevwin) == 'quickfix'
             call s:EchoTrace("from opened quickfix window")
             if empty(timer_info(s:winloc_update_timer))
                 let l:WinlocUpdater = function('<SID>WinlocUpdateOnEnter')
