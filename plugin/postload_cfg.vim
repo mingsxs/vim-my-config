@@ -63,16 +63,22 @@ if exists("+showtabline")
             let l:s .= (l:i == l:t ? '%#TabLineSel#' : '%#TabLine#')
             let l:bufnr = buflist[l:winnr - 1]
             let l:file = bufname(l:bufnr)
-            let l:buftype = getbufvar(l:bufnr, 'buftype')
-            if l:buftype == 'nofile'
+            if getbufvar(l:bufnr, 'buftype') == 'nofile'
                 if l:file =~ '\/.'
                     let l:file = substitute(l:file, '.*\/\ze.', '', '')
                 endif
             else
                 let l:file = fnamemodify(l:file, ':p:t')
             endif
-            if l:file == ''
-                let l:file = '[Untitled]'
+            if empty(l:file)
+                let l:ft = gettabwinvar(l:i, l:wn, '&ft')
+                if l:ft == 'qf' || l:ft == 'quickfix'
+                    let l:file = '[Quickfix]'
+                elseif l:ft == 'netrw' || l:ft == 'nerdtree'
+                    let l:file = '[Nerdtree]'
+                else
+                    let l:file = '[Untitled]'
+                endif
             endif
             let l:s .= l:file
             let l:s .= (l:i == l:t ? '%m' : '')
