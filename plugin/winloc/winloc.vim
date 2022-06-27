@@ -74,14 +74,17 @@ function! winloc#winloc#OnWinClose() abort
                 let cursor += 1
             endwhile
             " currently opened quickfix window is closed
-            if closing_curwin &&
-                        \ win_gettype(closed_win) == 'quickfix'
-                call s:EchoTrace("skip the next WinEnter event")
-                let s:winloc_cursor -= 1
-                let s:winloc_redirect = 1
-            else
-                " set the cursor to floating state
-                let s:winloc_cursor = -1
+            " a WinEnter event will be triggered soon
+            if closing_curwin
+                call s:EchoTrace("Closing current window")
+                if win_gettype(closed_win) == 'quickfix'
+                    call s:EchoTrace("skip the next WinEnter event")
+                    let s:winloc_cursor -= 1
+                    let s:winloc_redirect = 1
+                else
+                    " set the cursor to floating state
+                    let s:winloc_cursor = -1
+                endif
             endif
         endif
     endif
