@@ -85,7 +85,7 @@ function! winloc#winloc#OnWinClose() abort
                     let s:winloc_redirect = 1
                 else
                     " set the cursor to floating state
-                    let s:winloc_cursor = -1
+                    let s:winloc_cursor = len(s:winloc_fifo)
                 endif
             endif
         endif
@@ -155,6 +155,10 @@ function! winloc#winloc#OnWinEnter() abort
         else
             call s:EchoTrace("Entering a normal window")
             call s:WinlocUpdateOnEnter(0)
+        endif
+        " in some unknown cases the WinEnter event are omitted.
+        if !&cursorcolumn
+            doautocmd BufEnter *
         endif
     endif
 endfunction
