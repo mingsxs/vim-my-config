@@ -64,7 +64,8 @@ function! winloc#winloc#OnWinClose() abort
             let closing_curwin = 0
             while cursor < len(s:winloc_fifo)
                 while (get(s:winloc_fifo, cursor) == closed_win) ||
-                            \ (get(s:winloc_fifo, cursor) == get(s:winloc_fifo, cursor-1))
+                            \ (get(s:winloc_fifo, cursor) != 0 &&
+                            \ get(s:winloc_fifo, cursor) == get(s:winloc_fifo, cursor - 1))
                     call remove(s:winloc_fifo, cursor)
                     if cursor < s:winloc_cursor
                         let s:winloc_cursor -= 1
@@ -110,7 +111,8 @@ function s:WinlocUpdateOnEnter(timer) abort
     if curwin != prevwin
         if prevwin != 0 && prevwin != get(s:winloc_fifo, -1)
             call remove(s:winloc_fifo, s:winloc_cursor)
-            while get(s:winloc_fifo, s:winloc_cursor) == get(s:winloc_fifo, s:winloc_cursor-1)
+            while get(s:winloc_fifo, s:winloc_cursor) != 0 &&
+                        \ get(s:winloc_fifo, s:winloc_cursor) == get(s:winloc_fifo, s:winloc_cursor - 1)
                 call remove(s:winloc_fifo, s:winloc_cursor)
             endwhile
             call s:AppendWinloc(prevwin)
@@ -144,13 +146,14 @@ function! winloc#winloc#OnWinEnter() abort
         call s:EchoTrace("Entering Window:".win_getid())
         " previous quickfix window still open
         if win_gettype(prevwin) == 'quickfix'
-            call s:EchoTrace("from opened quickfix window")
+            call s:EchoTrace("left from opened quickfix window")
             if empty(timer_info(s:winloc_update_timer))
                 let l:WinlocUpdater = function('<SID>WinlocUpdateOnEnter')
                 call timer_stop(s:winloc_update_timer)
                 let s:winloc_update_timer = timer_start(get(g:, 'winloc_update_delay', 25), l:WinlocUpdater, {'repeat': 1})
             endif
         else
+            call s:EchoTrace("Entering a normal window")
             call s:WinlocUpdateOnEnter(0)
         endif
     endif
