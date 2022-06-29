@@ -57,7 +57,7 @@ function! winloc#winloc#OnWinClose() abort
     let closed_win = str2nr(expand('<amatch>'))
     let wt = win_gettype(closed_win)
     if get(g:, 'winloc_enable', 0) && (empty(wt) || wt == 'quickfix')
-        call s:EchoTrace("Closing Window:".closed_win)
+        call s:EchoTrace("Closing Window: ".closed_win.", window type: ".wt)
         if index(s:winloc_fifo, closed_win) >= 0
             " remove closed window and continuous window duplicates
             let cursor = 1
@@ -143,7 +143,7 @@ function! winloc#winloc#OnWinEnter() abort
                 return
             endif
         endif
-        call s:EchoTrace("Entering Window:".win_getid())
+        call s:EchoTrace("Entering Window:".win_getid().". window type:".win_gettype(win_getid()))
         " previous quickfix window still open
         if win_gettype(prevwin) == 'quickfix'
             call s:EchoTrace("left from opened quickfix window")
