@@ -112,9 +112,11 @@ function! s:AppendWinloc(winid, ...)
             return
         endif
         if !empty(a:000)
+            call s:EchoTrace("Insert window:".a:winid." to index:".a:000[0])
             call insert(s:winloc_fifo, a:winid, a:000[0])
             let s:winloc_cursor = a:000[0]
         else
+            call s:EchoTrace("Append window:".a:winid)
             call add(s:winloc_fifo, a:winid)
             let s:winloc_cursor = len(s:winloc_fifo) - 1
         endif
@@ -142,15 +144,26 @@ function s:WinlocUpdateOnEnter(timer) abort
         "   3. loclist window, append to current cursor
         if empty(wt)
             if lastwin && lastwin != get(s:winloc_fifo, -1)
-                call remove(s:winloc_fifo, s:winloc_cursor)
-                while get(s:winloc_fifo, s:winloc_cursor) != 0 &&
-                            \ get(s:winloc_fifo, s:winloc_cursor) == get(s:winloc_fifo, s:winloc_cursor-1)
-                    call remove(s:winloc_fifo, s:winloc_cursor)
+                " determine the windows that needs to be shifted to the end
+                let move_start = s:winloc_cursor
+                while move_start > 0 && !empty(win_gettype(s:winloc_fifo[move_start]))
+                    let move_start -= 1
                 endwhile
-                " move last window to winloc list end
-                call s:AppendWinloc(lastwin)
+                while move_start <= s:winloc_cursor
+                    let winmove = remove(s:winloc_fifo, move_start)
+                    let s:winloc_cursor -= 1
+                    if winmove != get(s:winloc_fifo, -1)
+                        call add(s:winloc_fifo, winmove)
+                    endif
+                endwhile
+                " remove consecutive duplicate
+                while get(s:winloc_fifo, move_start) && get(s:winloc_fifo, move_start) == get(s:winloc_fifo, move_start-1)
+                    call remove(s:winloc_fifo, move_start)
+                endwhile
+                call s:EchoTrace("After shift, winloc fifo:".join(s:winloc_fifo, ", "))
+                let s:winloc_cursor = len(s:winloc_fifo) - 1
             endif
-            " append win id only if it's not the latest
+            " append current window only if it's not the latest
             call s:AppendWinloc(curwin)
         elseif wt == "quickfix" || wt == "loclist"
             call s:AppendWinloc(curwin, s:winloc_cursor+1)
