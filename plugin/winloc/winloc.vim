@@ -15,11 +15,13 @@ let s:winloc_cursor = 0
 let s:winloc_switch = 0
 let s:winloc_redirect = 0
 let s:winloc_update_timer = -1
+let s:thread_lock = 0
+let g:winloc_trace_log = []
 
 " enable debug trace info
-function! s:EchoTrace(msg)
+function! s:LogTrace(msg)
     if get(g:, 'winloc_trace_enable', 0)
-        echomsg a:msg
+        call add(g:winloc_trace_log, a:msg)
     endif
 endfunction
 
@@ -59,7 +61,10 @@ function! winloc#winloc#OnWinClose() abort
         " and also the closed window info is still retrievable
         let closed_win = str2nr(expand('<amatch>'))
         let wt = win_gettype(closed_win)
-        call s:EchoTrace("Closing Window: ".closed_win.", window type: ".(empty(wt)? "normal buffer" : wt))
+        call s:LogTrace("Closing Window: ".closed_win.", window type: ".(empty(wt)? "normal buffer" : wt))
+        " Acquire Lock
+        while s:thread_lock | endwhile
+        let s:thread_lock = 1
         " check if existed in the winloc fifo
         if closed_win && index(s:winloc_fifo, closed_win) >= 0
             " only track following window types:
@@ -93,20 +98,21 @@ function! winloc#winloc#OnWinClose() abort
                 " currently opened quickfix window is closed
                 " a WinEnter event will be triggered soon
                 if get(l:, "curwin_closed")
-                    call s:EchoTrace("Closing current window")
+                    call s:LogTrace("Closing current window")
                     if wt == 'quickfix' || wt == 'loclist'
-                        call s:EchoTrace("Current window is quickfix or loclist window")
+                        call s:LogTrace("Current window is quickfix or loclist window")
                         let s:winloc_cursor -= 1
                         let s:winloc_redirect = 1
-                        call s:EchoTrace("skip next WinEnter event, directly jump back to previous window")
+                        call s:LogTrace("skip next WinEnter event, directly jump back to previous window")
                     else
-                        call s:EchoTrace("Current window is normal window")
+                        call s:LogTrace("Current window is normal window")
                         " set the cursor to floating state
                         let s:winloc_cursor = len(s:winloc_fifo)
                     endif
                 endif
             endif
         endif
+        let s:thread_lock = 0
     endif
 endfunction
 
@@ -117,16 +123,16 @@ function! s:AppendWinloc(winid, ...)
         let iprev = get(a:000, 0, 0) - 1
         " previous window is not changed
         if get(s:winloc_fifo, iprev) == a:winid
-            call s:EchoTrace("previous window is not changed, no append")
+            call s:LogTrace("previous window is not changed, no append")
             let s:winloc_cursor = iprev < 0 ? iprev + len(s:winloc_fifo) : iprev
             return
         endif
         if empty(a:000) || a:000[0] >= len(s:winloc_fifo)
-            call s:EchoTrace("Append window:".a:winid)
+            call s:LogTrace("Append window:".a:winid)
             call add(s:winloc_fifo, a:winid)
             let s:winloc_cursor = len(s:winloc_fifo) - 1
         else
-            call s:EchoTrace("Insert window:".a:winid." to index:".a:000[0])
+            call s:LogTrace("Insert window:".a:winid." to index:".a:000[0])
             call insert(s:winloc_fifo, a:winid, a:000[0])
             let s:winloc_cursor = a:000[0]
         endif
@@ -143,7 +149,10 @@ endfunction
 function s:WinlocUpdateOnEnter(timer) abort
     let wt = win_gettype()
     let curwin = win_getid()
-    call s:EchoTrace("Window Entered:".curwin.", window type:".(empty(wt)? "normal buffer" : wt))
+    call s:LogTrace("Window Entered:".curwin.", window type:".(empty(wt)? "normal buffer" : wt))
+    "Acquire Lock
+    while s:thread_lock | endwhile
+    let s:thread_lock = 1
     let lastwin = get(s:winloc_fifo, s:winloc_cursor)
     " entering the same window, skip
     if curwin != lastwin && (empty(wt) || wt == "quickfix" || wt == "loclist")
@@ -169,7 +178,7 @@ function s:WinlocUpdateOnEnter(timer) abort
                 while get(s:winloc_fifo, move_start) && get(s:winloc_fifo, move_start) == get(s:winloc_fifo, move_start-1)
                     call remove(s:winloc_fifo, move_start)
                 endwhile
-                call s:EchoTrace("After shift, winloc fifo:".join(s:winloc_fifo, ", "))
+                call s:LogTrace("After shift, winloc fifo:".join(s:winloc_fifo, ", "))
             endif
             " append current window only if it's not the latest
             call s:AppendWinloc(curwin)
@@ -181,19 +190,20 @@ function s:WinlocUpdateOnEnter(timer) abort
         " refresh the related autocmd/augroups.
         if !&cursorcolumn
             let s:winloc_switch = 1
-            call s:EchoTrace("do au WinEnter")
+            call s:LogTrace("do au WinEnter")
             doautocmd WinEnter *
             let s:winloc_switch = 0
             if tabpagenr() != tabpagenr("#")
-                call s:EchoTrace("do au TabEnter")
+                call s:LogTrace("do au TabEnter")
                 doautocmd TabEnter *
             endif
             if !empty(bufname())
-                call s:EchoTrace("do au BufEnter")
+                call s:LogTrace("do au BufEnter")
                 doautocmd BufEnter *
             endif
         endif
     endif
+    let s:thread_lock = 0
 endfunction
 
 " handler for updating winloc fifo on event #WinEnter with delay timer.
@@ -205,7 +215,7 @@ function! winloc#winloc#OnWinEnter() abort
         if s:winloc_redirect
             let s:winloc_redirect = 0
             let jumpwin = get(s:winloc_fifo, s:winloc_cursor)
-            call s:EchoTrace("redirect current window to:".jumpwin)
+            call s:LogTrace("redirect current window to:".jumpwin)
             if !empty(getwininfo(jumpwin))
                 " do fake *Leave autocmds
                 doautocmd BufLeave *
@@ -226,7 +236,7 @@ function! winloc#winloc#OnWinEnter() abort
                 " for unknown reason, DO NOT set the delay too short that's less than 50ms
                 if empty(timer_info(s:winloc_update_timer))
                     call timer_stop(s:winloc_update_timer)
-                    call s:EchoTrace("Entering Window, delay timer to handle event")
+                    call s:LogTrace("Entering Window, delay timer to handle event")
                     let l:WinlocUpdater = function("<SID>WinlocUpdateOnEnter")
                     let s:winloc_update_timer = timer_start(get(g:, "winloc_update_delay", 100), l:WinlocUpdater)
                 endif
@@ -238,7 +248,7 @@ endfunction
 " jump across winloc fifo
 function! winloc#winloc#JumpWinloc(direction) abort
     if get(g:, 'winloc_enable', 0)
-        call s:EchoTrace("winloc jump ".a:direction)
+        call s:LogTrace("winloc jump ".a:direction)
         " turn on switch to block incoming WinEnter event
         let s:winloc_switch = 1
         let curwin = win_getid()
@@ -252,7 +262,7 @@ function! winloc#winloc#JumpWinloc(direction) abort
         else
             let nextwin = get(s:winloc_fifo, next_cursor)
             if nextwin != curwin
-                call s:EchoTrace("initiate jump to window:".nextwin)
+                call s:LogTrace("initiate jump to window:".nextwin)
                 if win_gotoid(nextwin)
                     let s:winloc_cursor = next_cursor
                 else
