@@ -113,14 +113,14 @@ function! s:AppendWinloc(winid, ...)
             let s:winloc_cursor = iprev < 0 ? iprev + len(s:winloc_fifo) : iprev
             return
         endif
-        if !empty(a:000)
-            call s:EchoTrace("Insert window:".a:winid." to index:".a:000[0])
-            call insert(s:winloc_fifo, a:winid, a:000[0])
-            let s:winloc_cursor = a:000[0]
-        else
+        if empty(a:000) || a:000[0] >= len(s:winloc_fifo)
             call s:EchoTrace("Append window:".a:winid)
             call add(s:winloc_fifo, a:winid)
             let s:winloc_cursor = len(s:winloc_fifo) - 1
+        else
+            call s:EchoTrace("Insert window:".a:winid." to index:".a:000[0])
+            call insert(s:winloc_fifo, a:winid, a:000[0])
+            let s:winloc_cursor = a:000[0]
         endif
         if len(s:winloc_fifo) > get(g:, 'winloc_fifo_len', 16)
             let s:winloc_fifo = s:winloc_fifo[1:]
