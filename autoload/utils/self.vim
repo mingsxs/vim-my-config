@@ -241,15 +241,20 @@ function! utils#self#OnPressEsc() abort
     " only handle multiple window cases
     if l:winnrs > 1
         for winnr in range(1, l:winnrs)
-            let l:wft = getwinvar(winnr, '&ft')
-            let l:wt = win_gettype(winnr)
-            if empty(l:wft) || l:wft == 'help'
+            " [untitled] buffer
+            if empty(bufname(winbufnr(winnr)))
                 exec winnr."quit"
                 return
-            elseif l:wt == "quickfix"
+            " vim help doc
+            elseif getwinvar(winnr, "&ft") == "help"
+                exec winnr."quit"
+                return
+            " quickfix window
+            elseif win_gettype(winnr) == "quickfix"
                 cclose
                 return
-            elseif l:wt == "loclist"
+            " loclist window
+            elseif win_gettype(winnr) == "loclist"
                 lclose
                 return
             endif
