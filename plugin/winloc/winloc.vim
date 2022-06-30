@@ -214,12 +214,13 @@ function! winloc#winloc#OnWinEnter() abort
                 call s:WinlocUpdateOnEnter(0)
             else
                 " with fifo update function with delay to avoid WinEnter flood
-                " delay with 50ms by default
+                " delay with 100ms by default
+                " for unknown reason, DO NOT set the delay too short that's less than 50ms
                 if empty(timer_info(s:winloc_update_timer))
                     call timer_stop(s:winloc_update_timer)
                     call s:EchoTrace("Entering Window, delay timer to handle event")
                     let l:WinlocUpdater = function("<SID>WinlocUpdateOnEnter")
-                    let s:winloc_update_timer = timer_start(get(g:, "winloc_update_delay", 50), l:WinlocUpdater)
+                    let s:winloc_update_timer = timer_start(get(g:, "winloc_update_delay", 100), l:WinlocUpdater)
                 endif
             endif
         endif
