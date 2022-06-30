@@ -102,12 +102,14 @@ function! winloc#winloc#OnWinClose() abort
 endfunction
 
 " append new window id to the winloc fifo and update the winloc cursor.
+" This updater works as a delayed timer function
 function! s:AppendWinloc(winid, ...)
     if !empty(getwininfo(a:winid))
         let iprev = get(a:000, 0, 0) - 1
         " previous window is not changed
         if get(s:winloc_fifo, iprev) == a:winid
             call s:EchoTrace("previous window is not changed, no append")
+            let s:winloc_cursor = iprev < 0 ? iprev + len(s:winloc_fifo) : iprev
             return
         endif
         if !empty(a:000)
@@ -159,10 +161,22 @@ function s:WinlocUpdateOnEnter(timer) abort
                     call remove(s:winloc_fifo, move_start)
                 endwhile
                 call s:EchoTrace("After shift, winloc fifo:".join(s:winloc_fifo, ", "))
-                let s:winloc_cursor = len(s:winloc_fifo) - 1
             endif
             " append current window only if it's not the latest
             call s:AppendWinloc(curwin)
+            " in some unknown cases, the previous Winter/BufEnter doesn't work on current window
+            " refresh the related autocmd/augroups.
+            if !&cursorcolumn
+                let s:winloc_switch = 1
+                doautocmd WinEnter *
+                let s:winloc_switch = 0
+                if tabpagenr() != tabpagenr("#")
+                    doautocmd TabEnter *
+                endif
+                if !empty(bufname())
+                    doautocmd BufEnter *
+                endif
+            endif
         elseif wt == "quickfix" || wt == "loclist"
             call s:AppendWinloc(curwin, s:winloc_cursor+1)
         endif
