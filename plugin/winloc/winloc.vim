@@ -68,15 +68,23 @@ function! winloc#winloc#OnWinClose() abort
             "   3. loclist window
             if empty(wt) || wt == "quickfix" || wt == "loclist"
                 let cursor = 1
-                " remove closed window and continuous window duplicates
                 while cursor < len(s:winloc_fifo)
                     let cursorwin = get(s:winloc_fifo, cursor)
-                    if cursorwin == closed_win || cursorwin == get(s:winloc_fifo, cursor-1)
+                    " remove closed window from fifo
+                    if cursorwin == closed_win
                         call remove(s:winloc_fifo, cursor)
                         if cursor < s:winloc_cursor
                             let s:winloc_cursor -= 1
-                        elseif cursorwin == closed_win && cursor == s:winloc_cursor
+                        elseif cursor == s:winloc_cursor
                             let curwin_closed = 1
+                        endif
+                    " remove consecutive duplicated windows from fifo
+                    elseif cursorwin == get(s:winloc_fifo, cursor - 1)
+                        call remove(s:winloc_fifo, cursor)
+                        if cursor < s:winloc_cursor
+                            let s:winloc_cursor -= 1
+                        elseif cursor == s:winloc_cursor
+                            let s:winloc_cursor = cursor - 1
                         endif
                     else
                         let cursor += 1
