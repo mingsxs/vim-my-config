@@ -70,16 +70,17 @@ function! winloc#winloc#OnWinClose() abort
                 let cursor = 1
                 " remove closed window and continuous window duplicates
                 while cursor < len(s:winloc_fifo)
-                    while get(s:winloc_fifo, cursor) == closed_win ||
-                                \ get(s:winloc_fifo, cursor) == get(s:winloc_fifo, cursor-1)
+                    let cursorwin = get(s:winloc_fifo, cursor)
+                    if cursorwin == closed_win || cursorwin == get(s:winloc_fifo, cursor-1)
                         call remove(s:winloc_fifo, cursor)
-                        if cursor < s:winloc_cursor
+                        if cusor < s:winloc_cursor
                             let s:winloc_cursor -= 1
-                        elseif cursor == s:winloc_cursor
+                        elseif cursorwin == closed_win && cursor == s:winloc_cursor
                             let curwin_closed = 1
                         endif
-                    endwhile
-                    let cursor += 1
+                    else
+                        let cursor += 1
+                    endif
                 endwhile
                 " currently opened quickfix window is closed
                 " a WinEnter event will be triggered soon
@@ -133,11 +134,11 @@ endfunction
 " timer function to append current window to winloc fifo on WinEnter.
 function s:WinlocUpdateOnEnter(timer) abort
     let wt = win_gettype()
-    call s:EchoTrace("Entered window type:".(empty(wt)? "normal buffer" : wt))
     let curwin = win_getid()
+    call s:EchoTrace("Window Entered:".curwin.", window type:".(empty(wt)? "normal buffer" : wt))
     let lastwin = get(s:winloc_fifo, s:winloc_cursor)
     " entering the same window, skip
-    if curwin != lastwin
+    if curwin != lastwin && (empty(wt) || wt == "quickfix" || wt == "loclist")
         " only track following window types:
         "   1. normal window, append to fifo end
         "   2. quickfix window, append to current cursor
@@ -164,21 +165,25 @@ function s:WinlocUpdateOnEnter(timer) abort
             endif
             " append current window only if it's not the latest
             call s:AppendWinloc(curwin)
-            " in some unknown cases, the previous Winter/BufEnter doesn't work on current window
-            " refresh the related autocmd/augroups.
-            if !&cursorcolumn
-                let s:winloc_switch = 1
-                doautocmd WinEnter *
-                let s:winloc_switch = 0
-                if tabpagenr() != tabpagenr("#")
-                    doautocmd TabEnter *
-                endif
-                if !empty(bufname())
-                    doautocmd BufEnter *
-                endif
-            endif
-        elseif wt == "quickfix" || wt == "loclist"
+        else
+            " entering quickfix window and loclist window
             call s:AppendWinloc(curwin, s:winloc_cursor+1)
+        endif
+        " in some unknown cases, the previous Winter/BufEnter doesn't work on current window
+        " refresh the related autocmd/augroups.
+        if !&cursorcolumn
+            let s:winloc_switch = 1
+            call s:EchoTrace("do au WinEnter")
+            doautocmd WinEnter *
+            let s:winloc_switch = 0
+            if tabpagenr() != tabpagenr("#")
+                call s:EchoTrace("do au TabEnter")
+                doautocmd TabEnter *
+            endif
+            if !empty(bufname())
+                call s:EchoTrace("do au BufEnter")
+                doautocmd BufEnter *
+            endif
         endif
     endif
 endfunction
@@ -212,7 +217,7 @@ function! winloc#winloc#OnWinEnter() abort
                 " delay with 50ms by default
                 if empty(timer_info(s:winloc_update_timer))
                     call timer_stop(s:winloc_update_timer)
-                    call s:EchoTrace("Entering Window:".win_getid().", delay timer to handle event")
+                    call s:EchoTrace("Entering Window, delay timer to handle event")
                     let l:WinlocUpdater = function("<SID>WinlocUpdateOnEnter")
                     let s:winloc_update_timer = timer_start(get(g:, "winloc_update_delay", 50), l:WinlocUpdater)
                 endif
