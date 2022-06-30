@@ -368,3 +368,15 @@ map <silent> f <Plug>Sneak_f
 map <silent> F <Plug>Sneak_F
 map <silent> t <Plug>Sneak_t
 map <silent> T <Plug>Sneak_T
+
+
+"-----------------------------------------------------------------------
+" Plugin Settings: vim-my-config.winloc.
+"-----------------------------------------------------------------------
+function! s:LeftMouseClik()
+    if (&mouse ==# 'nv' || &mouse ==# 'a') && get(g:, "left_mouse_click") == 0
+        let g:left_mouse_click = 1
+    endif
+endfunction
+"nnoremap <silent> <expr> <LeftMouse> <SID>LeftMouseClik()
+"vnoremap <silent> <expr> <LeftMouse> <SID>LeftMouseClik()

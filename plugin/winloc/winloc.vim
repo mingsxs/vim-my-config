@@ -73,7 +73,7 @@ function! winloc#winloc#OnWinClose() abort
                     let cursorwin = get(s:winloc_fifo, cursor)
                     if cursorwin == closed_win || cursorwin == get(s:winloc_fifo, cursor-1)
                         call remove(s:winloc_fifo, cursor)
-                        if cusor < s:winloc_cursor
+                        if cursor < s:winloc_cursor
                             let s:winloc_cursor -= 1
                         elseif cursorwin == closed_win && cursor == s:winloc_cursor
                             let curwin_closed = 1
