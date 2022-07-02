@@ -1,10 +1,6 @@
 " check for vim event support.
-if !(has('timers') &&
-            \ exists('##WinEnter') &&
-            \ exists('##WinLeave') &&
-            \ exists('##WinNew') &&
-            \ exists('##WinClosed'))
-    echomsg "Error: winloc requires feature `timers` and events #WinEnter, #WinLeave, #WinNew and #WinClosed support."
+if !(has('timers') && exists('##WinEnter') && exists('##WinClosed'))
+    echomsg "Error: winloc requires feature `timers` and events #WinEnter, #WinClosed support."
     finish
 endif
 
