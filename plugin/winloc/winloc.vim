@@ -116,6 +116,29 @@ function! winloc#winloc#OnWinClose() abort
     endif
 endfunction
 
+function! s:PostWinEventCheck() abort
+    " in some unknown cases, the previous Winter/BufEnter doesn't work on current window
+    " refresh the related autocmd/augroups.
+    function! WinEventDelayCheck(timer) abort
+        if !&cursorcolumn && !&cursorline
+            let s:winloc_switch = 1
+            call s:LogTrace("do au WinEnter")
+            doautocmd WinEnter *
+            let s:winloc_switch = 0
+            if tabpagenr() != tabpagenr("#")
+                call s:LogTrace("do au TabEnter")
+                doautocmd TabEnter *
+            endif
+            if !empty(bufname())
+                call s:LogTrace("do au BufEnter")
+                doautocmd BufEnter *
+            endif
+        endif
+    endfunction
+    " start window event check with delay timer and repeat
+    call timer_start(200, 'WinEventDelayCheck', {'repeat': 3})
+endfunction
+
 " append new window id to the winloc fifo and update the winloc cursor.
 " This updater works as a delayed timer function
 function! s:AppendWinloc(winid, ...)
@@ -186,22 +209,8 @@ function s:WinlocUpdateOnEnter(timer) abort
             " entering quickfix window and loclist window
             call s:AppendWinloc(curwin, s:winloc_cursor+1)
         endif
-        " in some unknown cases, the previous Winter/BufEnter doesn't work on current window
-        " refresh the related autocmd/augroups.
-        if !&cursorcolumn
-            let s:winloc_switch = 1
-            call s:LogTrace("do au WinEnter")
-            doautocmd WinEnter *
-            let s:winloc_switch = 0
-            if tabpagenr() != tabpagenr("#")
-                call s:LogTrace("do au TabEnter")
-                doautocmd TabEnter *
-            endif
-            if !empty(bufname())
-                call s:LogTrace("do au BufEnter")
-                doautocmd BufEnter *
-            endif
-        endif
+        " window au event post check
+        call s:PostWinEventCheck()
     endif
     let s:thread_lock = 0
 endfunction
@@ -262,9 +271,10 @@ function! winloc#winloc#JumpWinloc(direction) abort
         else
             let nextwin = get(s:winloc_fifo, next_cursor)
             if nextwin != curwin
-                call s:LogTrace("initiate jump to window:".nextwin)
+                call s:LogTrace("initiate jumping to window:".nextwin)
                 if win_gotoid(nextwin)
                     let s:winloc_cursor = next_cursor
+                    call s:PostWinEventCheck()
                 else
                     echomsg "Window ID .".nextwin." not found, do nothing"
                     if nextwin != 0
