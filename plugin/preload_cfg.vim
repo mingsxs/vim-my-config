@@ -380,3 +380,9 @@ function! s:LeftMouseClik()
 endfunction
 "nnoremap <silent> <expr> <LeftMouse> <SID>LeftMouseClik()
 "vnoremap <silent> <expr> <LeftMouse> <SID>LeftMouseClik()
+
+
+"-----------------------------------------------------------------------
+" Plugin Settings: vim-go.
+"-----------------------------------------------------------------------
+let g:go_doc_keywordprg_enabled = 0
