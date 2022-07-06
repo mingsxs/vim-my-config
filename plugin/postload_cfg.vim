@@ -318,3 +318,15 @@ nnoremap <silent> <Leader>- :<C-U>call utils#self#AdjustWindowSize("horizontal",
 " Horizontally enlarge window. eg: shift - +.
 nnoremap <silent> <Leader>= :<C-U>call utils#self#AdjustWindowSize("horizontal", "more")<cr>
 
+
+"-----------------------------------------------------------------------
+" Enable copy/paste with visual block.
+"-----------------------------------------------------------------------
+function! s:ClipboardOptSwitch()
+    if &clipboard =~# 'unnamed'
+        set clipboard-=unnamed
+    else
+        set clipboard+=unnamed
+    endif
+endfunction
+nnoremap <silent><M-p> :call <SID>ClipboardOptSwitch()<cr>

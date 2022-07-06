@@ -5,39 +5,11 @@
 " Author: Ming Li (adagio.ming@gmail.com)                   |
 "------------------------------------------------------------
 
+
 "-----------------------------------------------------------------------
-" Plugin Settings: Tagbar.
+" set the leader key for vim.
 "-----------------------------------------------------------------------
-"let g:tagbar_right=1
-"let g:tagbar_width=30
-"let g:tagbar_autofocus = 1
-"let g:tagbar_sort = 0
-"let g:tagbar_compact = 1
-"if executable('coffeetags')  " configure coffee tag.
-"  let g:tagbar_type_coffee = {
-"        \ 'ctagsbin' : 'coffeetags',
-"        \ 'ctagsargs' : '',
-"        \ 'kinds' : [
-"        \ 'f:functions',
-"        \ 'o:object',
-"        \ ],
-"        \ 'sro' : ".",
-"        \ 'kind2scope' : {
-"        \ 'f' : 'object',
-"        \ 'o' : 'object',
-"        \ }
-"        \ }
-"
-"  let g:tagbar_type_markdown = {
-"    \ 'ctagstype' : 'markdown',
-"    \ 'sort' : 0,
-"    \ 'kinds' : [
-"        \ 'h:sections'
-"    \ ]
-"    \ }
-"endif
-"
-"nmap <Leader>T :TagbarToggle<cr>
+let g:mapleader = ','
 
 
 "-----------------------------------------------------------------------
@@ -385,4 +357,4 @@ endfunction
 "-----------------------------------------------------------------------
 " Plugin Settings: vim-go.
 "-----------------------------------------------------------------------
-let g:go_doc_keywordprg_enabled = 0
+let g:go_doc_keywordprg_enabled = 0  " disable `K` map for godoc

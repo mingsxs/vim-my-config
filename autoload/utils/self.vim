@@ -9,13 +9,6 @@
 
 
 "-----------------------------------------------------------------------
-" check the leader key.
-"-----------------------------------------------------------------------
-if !exists("g:mapleader")
-    let g:mapleader = ','
-endif
-
-"-----------------------------------------------------------------------
 " relativenumber toggle function.
 "-----------------------------------------------------------------------
 function! utils#self#NumberToggle()
@@ -341,4 +334,14 @@ function! utils#self#SetQuickfixOpen()
     nnoremap <silent> <buffer> h  <C-W><CR><C-w>K
     nnoremap <silent> <buffer> H  <C-W><CR><C-w>K<C-w>b
     nnoremap <silent> <buffer> v  <C-w><CR><C-w>H<C-W>b<C-W>J<C-W>t
+endfunction
+
+
+"-----------------------------------------------------------------------
+" Enable block paste.
+"-----------------------------------------------------------------------
+function! utils#self#LocalClipboardPaste() abort
+    set clipboard-=unnamed
+    call feedkeys("p", "t")
+    set clipboard+=unnamed
 endfunction
