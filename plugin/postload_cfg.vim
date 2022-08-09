@@ -35,6 +35,16 @@ augroup END
 
 
 "-----------------------------------------------------------------------
+" Highlight cursor column and line, dehighlight them when leaving window
+"-----------------------------------------------------------------------
+augroup HighlightCursorPosition
+    au!
+    au WinEnter,TabEnter,BufEnter * if !&cursorcolumn | set cursorline cursorcolumn | endif
+    au WinLeave,TabLeave * if &cursorcolumn | set nocursorline nocursorcolumn | endif
+augroup END
+
+
+"-----------------------------------------------------------------------
 " show tab line.
 "-----------------------------------------------------------------------
 if exists("+showtabline")
@@ -330,3 +340,13 @@ function! s:ClipboardOptSwitch()
     endif
 endfunction
 nnoremap <silent><M-p> :call <SID>ClipboardOptSwitch()<cr>
+
+
+"-----------------------------------------------------------------------
+" Disable cursor moving by mouse when losting/gaining window focus.
+"-----------------------------------------------------------------------
+augroup NoCursorMoveOnFocus
+    autocmd!
+    autocmd FocusLost * let g:mouse_opt_save=&mouse | set mouse=
+    autocmd FocusGained * if exists('g:mouse_opt_save') | let &mouse=g:mouse_opt_save | unlet g:mouse_opt_save | endif
+augroup END
