@@ -234,7 +234,7 @@ nnoremap <silent> <Esc> :call utils#self#OnPressEsc()<CR>
 "-----------------------------------------------------------------------
 augroup ResizePanels
     au!
-    :au VimResized * wincmd =
+    :au VimResized * let winid = win_getid() | noautocmd silent! tabdo wincmd = | call win_gotoid(winid)
 augroup END
 
 

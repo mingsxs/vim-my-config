@@ -25,5 +25,3 @@ function! utils#onevent#BufReadPost()
         endif
     endif
 endfunction
-
-
