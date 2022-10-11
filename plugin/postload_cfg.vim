@@ -335,8 +335,10 @@ nnoremap <silent> <Leader>= :<C-U>call utils#self#AdjustWindowSize("horizontal",
 function! s:ClipboardOptSwitch()
     if &clipboard =~# 'unnamed'
         set clipboard-=unnamed
+        echo "remove clipboard setting"
     else
         set clipboard+=unnamed
+        echo "restore clipboard setting"
     endif
 endfunction
 nnoremap <silent><M-p> :call <SID>ClipboardOptSwitch()<cr>
