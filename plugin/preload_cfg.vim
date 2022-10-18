@@ -156,10 +156,14 @@ let g:ale_enabled = 1
 " Set ale linters globally.
 let g:ale_linters = {
             \ 'javascript': ['eslint'],
-            \ 'python': ['flake8 --ignore=E221,E222', 'pylint'],
+            \ 'python': ['flake8', 'pylint'],
             \ 'c': ['gcc'],
             \ 'cpp': ['g++'],
             \    }
+" configure options for particular linter commands
+" python flake8
+" https://pycodestyle.pycqa.org/en/latest/intro.html#error-codes
+call ale#Set('python_flake8_options', '--ignore=E221,E222,E501')
 
 " Only run linters specified in ale_linters settings.
 let g:ale_linters_explicit = 0
