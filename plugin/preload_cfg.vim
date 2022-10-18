@@ -154,15 +154,12 @@ endif
 let g:ale_enabled = 1
 
 " Set ale linters globally.
-"let g:ale_linters = {}
-"if executable('gcc')
-"    let g:ale_linters.c = "gcc"
-"endif
-"if executable('flake8')
-"    let g:ale_linters.python = "flake8"
-"elseif executable('pylint')
-"    let g:ale_linters.python = "pylint"
-"endif
+let g:ale_linters = {
+            \ 'javascript': ['eslint'],
+            \ 'python': ['flake8 --ignore=E221,E222', 'pylint'],
+            \ 'c': ['gcc'],
+            \ 'cpp': ['g++'],
+            \    }
 
 " Only run linters specified in ale_linters settings.
 let g:ale_linters_explicit = 0
