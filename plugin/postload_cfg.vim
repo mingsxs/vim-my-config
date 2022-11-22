@@ -162,17 +162,6 @@ nnoremap gb :ls<cr>:b<space>
 
 
 "-----------------------------------------------------------------------
-" Vim brackets auto-complement in insert mode.
-"-----------------------------------------------------------------------
-inoremap ( ()<ESC>i
-inoremap [ []<ESC>i
-inoremap { {}<ESC>i
-" inoremap < <><ESC>i
-inoremap " ""<ESC>i
-inoremap ' ''<ESC>i
-
-
-"-----------------------------------------------------------------------
 " Vim easily navigate across different windows.
 "-----------------------------------------------------------------------
 nnoremap <c-j> <c-w>j
