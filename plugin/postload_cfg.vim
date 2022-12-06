@@ -341,3 +341,12 @@ augroup NoCursorMoveOnFocus
     autocmd FocusLost * let g:mouse_opt_save=&mouse | set mouse=
     autocmd FocusGained * if exists('g:mouse_opt_save') | let &mouse=g:mouse_opt_save | unlet g:mouse_opt_save | endif
 augroup END
+
+
+"-----------------------------------------------------------------------
+" Close popup window on WinLeave event.
+"-----------------------------------------------------------------------
+augroup ClosePopupOnWinLeave
+    autocmd!
+    autocmd WinLeave * if win_gettype() == 'popup' | wincmd c | endif
+augroup END
