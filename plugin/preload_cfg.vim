@@ -152,7 +152,6 @@ endif
 "-----------------------------------------------------------------------
 " Eable ale.
 let g:ale_enabled = 1
-
 " Set ale linters globally.
 let g:ale_linters = {
             \ 'javascript': ['eslint'],
@@ -164,46 +163,39 @@ let g:ale_linters = {
 " python flake8
 " https://pycodestyle.pycqa.org/en/latest/intro.html#error-codes
 call ale#Set('python_flake8_options', '--ignore=E221,E222,E501,E241')
-
 " Only run linters specified in ale_linters settings.
 let g:ale_linters_explicit = 0
-
 " Disable ale completion.
 let g:ale_completion_enabled = 0
-
 " Set max suggestion number of ale completion.
 "let g:ale_completion_max_suggestions = 20
-
 " Enable ale airline extension.
 let g:airline#extensions#ale#enabled = 1
-
 " Set ale error signs.
 let g:ale_sign_error = '>'
-
 " Set ale warning signs.
 let g:ale_sign_warning = '-'
-
 " Set format for Error message.
 let g:ale_echo_msg_error_str = 'E'
-
 " Set format for Warning message.
 let g:ale_echo_msg_warning_str = 'W'
-
 " Set message format.
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-
-" Select loclist window to show Error items.
-let g:ale_set_loclist = 1
-let g:ale_set_quickfix = 0
-
 " Set number of the list for ale to display Errors.
-let g:ale_list_window_size = 6
-
-" Close preview window upon insert mode.
+let g:ale_list_window_size = 10
+" Set ale preview window
+let g:ale_cursor_detail = 0
 let g:ale_close_preview_on_insert = 1
-
+let g:ale_echo_delay = 10
 " Set ale linter delay.
 let g:ale_lint_delay = 2000
+" How to report problems.
+let g:ale_set_loclist = 1
+let g:ale_set_quickfix = 0
+let g:ale_set_highlight = 1
+let g:ale_echo_cursor = 1
+let g:ale_set_balloons = 0
+let g:ale_virtualtext_cursor = 'disabled'
 
 
 "-----------------------------------------------------------------------
