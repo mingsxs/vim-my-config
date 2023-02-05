@@ -14,16 +14,10 @@ noremap <silent> <c-n> :call utils#self#NumberToggle()<cr>
 
 
 "-----------------------------------------------------------------------
-" code fold method toggle map.
+" fold toggling map.
 "-----------------------------------------------------------------------
-nnoremap <silent> <leader>f :call utils#self#CodeFoldToggle()<cr>
-
-
-"-----------------------------------------------------------------------
-" tabs/spaces expanding toggle map.
-"-----------------------------------------------------------------------
-nnoremap <silent> <Leader>t :call utils#self#TabSpaceToggle()<cr>
-
+nnoremap <silent> <space> za
+vnoremap <silent> <space> zf
 
 "-----------------------------------------------------------------------
 " BufReadPost event hanlder.

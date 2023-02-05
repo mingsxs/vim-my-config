@@ -20,21 +20,6 @@ function! utils#self#NumberToggle()
 endfunction
 
 "-----------------------------------------------------------------------
-" code fold method toggle function.
-"-----------------------------------------------------------------------
-function! utils#self#CodeFoldToggle()
-    if exists('&foldmethod')
-        if &foldenable
-            setlocal nofoldenable
-        else
-            setlocal foldenable
-        endif
-    else
-        echomsg "Vim doesn't support option foldmethod"
-    endif
-endfunction
-
-"-----------------------------------------------------------------------
 " tabs/spaces expanding toggle function.
 "-----------------------------------------------------------------------
 function! utils#self#TabSpaceToggle()
