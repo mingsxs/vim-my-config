@@ -27,7 +27,7 @@ function! utils#self#CodeFoldToggle()
         if &foldenable
             setlocal nofoldenable
         else
-            setlocal foldenable foldmethod=syntax
+            setlocal foldenable
         endif
     else
         echomsg "Vim doesn't support option foldmethod"

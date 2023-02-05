@@ -107,13 +107,13 @@ endif
 "-----------------------------------------------------------------------
 augroup FiletypeConfig
     autocmd!
+    autocmd FileType python             setlocal tabstop=4 shiftwidth=4 softtabstop=4 expandtab smarttab nofoldenable foldmethod=indent foldnestmax=2
+    autocmd FileType c,cpp,make,java    setlocal tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab nofoldenable foldmethod=syntax cindent foldnestmax=2
     autocmd FileType php,ruby           setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab smarttab
     autocmd FileType coffee,javascript  setlocal tabstop=2 shiftwidth=2 softtabstop=2 noexpandtab smarttab
-    autocmd FileType python             setlocal tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=indent nofoldenable expandtab smarttab
-    autocmd FileType c,cpp,make         setlocal tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=syntax cindent nofoldenable noexpandtab
     autocmd FileType vim,zsh,tcsh       setlocal tabstop=4 shiftwidth=4 softtabstop=4 expandtab smarttab
-    autocmd FileType html,htmldjango,xhtml,haml,css setlocal tabstop=2 shiftwidth=2 softtabstop=2 nofoldenable expandtab smarttab
-    autocmd FileType yaml               setlocal tabstop=2 shiftwidth=2 softtabstop=2 foldmethod=indent nofoldenable expandtab smarttab
+    autocmd FileType html,htmldjango,xhtml,haml,css setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab smarttab nofoldenable
+    autocmd FileType yaml               setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab smarttab nofoldenable foldmethod=indent foldnestmax=2
 augroup END
 
 
