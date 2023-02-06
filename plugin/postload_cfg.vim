@@ -24,7 +24,7 @@ vnoremap <silent> <space> zf
 "-----------------------------------------------------------------------
 augroup JumpLastCursor
     autocmd!
-    autocmd BufReadPost *   :call utils#onevent#BufReadPost()
+    autocmd BufReadPost * :call utils#onevent#BufReadPost()
 augroup END
 
 
@@ -349,3 +349,4 @@ augroup END
 " Disable cursor leftmove when exit from insert mode.
 "-----------------------------------------------------------------------
 inoremap <silent> <esc> <esc>l
+nnoremap <silent> <Leader>e :call utils#self#EscMapToggle()<cr>

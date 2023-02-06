@@ -35,16 +35,16 @@ function! utils#self#TabSpaceToggle()
 endfunction
 
 "-----------------------------------------------------------------------
-" tabs/spaces expanding toggle function.
+" trigger <esc> map/unmap on insert mode.
 "-----------------------------------------------------------------------
-function! utils#self#setFileRetab()
-    let l:filename = getreg('%')
-    try
-        if filewritable(l:filename) && (match(l:filename, '.*udi_.*') == -1)
-            :%retab
-        endif
-    catch
-    endtry
+function! utils#self#EscMapToggle()
+    if get(s:, 'esc_key_mapped', 1)
+        iunmap <esc>
+        let s:esc_key_mapped = 0
+    else
+        inoremap <silent> <esc> <esc>l
+        let s:esc_key_mapped = 1
+    endif
 endfunction
 
 "-----------------------------------------------------------------------
