@@ -343,3 +343,9 @@ augroup ClosePopupOnWinLeave
     autocmd!
     autocmd WinLeave * if win_gettype() == 'popup' | wincmd c | endif
 augroup END
+
+
+"-----------------------------------------------------------------------
+" Disable cursor leftmove when exit from insert mode.
+"-----------------------------------------------------------------------
+inoremap <silent> <esc> <esc>l
