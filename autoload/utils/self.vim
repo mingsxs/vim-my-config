@@ -330,3 +330,15 @@ function! utils#self#LocalClipboardPaste() abort
     call feedkeys("p", "t")
     set clipboard+=unnamed
 endfunction
+
+
+"-----------------------------------------------------------------------
+" toggling open/close all folds in local buffer.
+"-----------------------------------------------------------------------
+function! utils#self#OpenAllFoldsToggle()
+    if &foldenable && &foldlevel
+        normal zM
+    else
+        normal zR
+    endif
+endfunction

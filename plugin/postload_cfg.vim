@@ -18,6 +18,7 @@ noremap <silent> <c-n> :call utils#self#NumberToggle()<cr>
 "-----------------------------------------------------------------------
 nnoremap <silent> <space> za
 vnoremap <silent> <space> zf
+nnoremap <silent> <c-space> :call utils#self#OpenAllFoldsToggle()<cr>
 
 "-----------------------------------------------------------------------
 " BufReadPost event hanlder.
