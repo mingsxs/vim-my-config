@@ -333,12 +333,30 @@ endfunction
 
 
 "-----------------------------------------------------------------------
-" toggling open/close all folds in local buffer.
+" Toggling open/close all folds in local buffer.
 "-----------------------------------------------------------------------
 function! utils#self#OpenAllFoldsToggle()
     if &foldenable && &foldlevel
         normal zM
     else
         normal zR
+    endif
+endfunction
+
+
+"-----------------------------------------------------------------------
+"Tabpage/Window movement.
+"-----------------------------------------------------------------------
+function! utils#self#TabWinMove(target)
+    if a:target == 'window'
+        let l:cmd = v:count1.'wincmd w'
+        echomsg l:cmd
+        exec l:cmd
+    elseif a:target == 'tabpage'
+        let l:cmd = v:count1.'gt'
+        echomsg l:cmd
+        normal l:cmd
+    else
+        echomsg 'invalid movement target'.a:target
     endif
 endfunction

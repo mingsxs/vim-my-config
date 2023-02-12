@@ -272,7 +272,7 @@ nnoremap <silent> <M-o> :call winloc#winloc#JumpWinloc('prev')<CR>
 
 
 "-----------------------------------------------------------------------
-" Move to window N by <Leader> + N.
+" Tabpage/window movement mapping.
 "-----------------------------------------------------------------------
 nnoremap <silent> <Leader>1 :1wincmd w<CR>
 nnoremap <silent> <Leader>2 :2wincmd w<CR>
