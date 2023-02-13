@@ -182,15 +182,15 @@ endfunction
 function! utils#self#AdjustWindowSize(scale, action)
     if a:scale == 'horizontal'
         if a:action == 'less'
-            exec 'resize -'.v:count1
+            exec 'resize -' .. v:count1
         else
-            exec 'resize +'.v:count1
+            exec 'resize +' .. v:count1
         endif
     else
         if a:action == 'less'
-            exec 'vertical resize -'.v:count1
+            exec 'vertical resize -' .. v:count1
         else
-            exec 'vertical resize +'.v:count1
+            exec 'vertical resize +' .. v:count1
         endif
     endif
 endfunction
@@ -203,7 +203,7 @@ function! utils#self#TerminalMapAltKey() abort
     if !has('nvim')
         " set alt key combined with a-z, A-Z
         for ascval in range(65, 90) + range(97, 122)
-            exec "set <M-".nr2char(ascval).">=\<Esc>".nr2char(ascval)
+            exec "set <M-" .. nr2char(ascval) .. ">=\<Esc>" .. nr2char(ascval)
         endfor
         " set key response timeout to 50ms, otherwise you can't hit <Esc> in 1 sec
         set ttimeoutlen=25
@@ -221,11 +221,11 @@ function! utils#self#OnPressEsc() abort
         for winnr in range(1, l:winnrs)
             " [untitled] buffer
             if empty(bufname(winbufnr(winnr)))
-                exec winnr."quit"
+                exec winnr .. "quit"
                 return
             " vim help doc
             elseif getwinvar(winnr, "&ft") == "help"
-                exec winnr."quit"
+                exec winnr .. "quit"
                 return
             " quickfix window
             elseif win_gettype(winnr) == "quickfix"
@@ -300,7 +300,7 @@ function! utils#self#SwitchTabWin() abort
             if winft == 'qf' ||
                     \ winft == 'quickfix' ||
                     \ winft == 'help'
-                exec ntab."tabclose"
+                exec ntab .. "tabclose"
             endif
         endif
     endfor
@@ -345,18 +345,14 @@ endfunction
 
 
 "-----------------------------------------------------------------------
-"Tabpage/Window movement.
+"Tabpage/Window jump.
 "-----------------------------------------------------------------------
-function! utils#self#TabWinMove(target)
+function! utils#self#GoToTabWin(target)
     if a:target == 'window'
-        let l:cmd = v:count1.'wincmd w'
-        echomsg l:cmd
-        exec l:cmd
+        exec v:count1 .. "wincmd w"
     elseif a:target == 'tabpage'
-        let l:cmd = v:count1.'gt'
-        echomsg l:cmd
-        normal l:cmd
+        exec "normal" v:count1 .. "gt"
     else
-        echomsg 'invalid movement target'.a:target
+        echomsg 'invalid movement target' .. a:target
     endif
 endfunction

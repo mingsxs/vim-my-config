@@ -283,6 +283,8 @@ nnoremap <silent> <Leader>6 :6wincmd w<CR>
 nnoremap <silent> <Leader>7 :7wincmd w<CR>
 nnoremap <silent> <Leader>8 :8wincmd w<CR>
 nnoremap <silent> <Leader>9 :9wincmd w<CR>
+nnoremap <silent> <M-j> :call utils#self#GoToTabWin("tabpage")<CR>
+nnoremap <silent> <M-k> :call utils#self#GoToTabWin("window")<CR>
 
 
 "-----------------------------------------------------------------------
