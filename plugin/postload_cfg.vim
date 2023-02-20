@@ -21,7 +21,7 @@ vnoremap <silent> <space> zf
 nnoremap <silent> <c-space> :call utils#self#OpenAllFoldsToggle()<cr>
 
 "-----------------------------------------------------------------------
-" BufReadPost event hanlder.
+" Jump to last cursor position.
 "-----------------------------------------------------------------------
 augroup JumpLastCursor
     autocmd!

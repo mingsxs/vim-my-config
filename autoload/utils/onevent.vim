@@ -19,7 +19,7 @@ endfunction
 "-----------------------------------------------------------------------
 function! utils#onevent#BufReadPost()
     " always jump to the last cursor position when edit new file.
-    if !exists("g:leave_my_cursor_position_alone")
+    if get(g:, 'g:go_last_cursor_location', 1)
         if line("'\"") > 0 && line ("'\"") <= line("$")
             exec "normal g'\""
         endif
