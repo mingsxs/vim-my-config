@@ -345,7 +345,7 @@ endfunction
 
 
 "-----------------------------------------------------------------------
-"Tabpage/Window jump.
+" Tabpage/Window jump.
 "-----------------------------------------------------------------------
 function! utils#self#GoToTabWin(target)
     if a:target == 'window'
@@ -354,5 +354,25 @@ function! utils#self#GoToTabWin(target)
         exec "normal" v:count1 .. "gt"
     else
         echomsg 'invalid movement target' .. a:target
+    endif
+endfunction
+
+
+"-----------------------------------------------------------------------
+" vim-go fmt-autosave/imports-autosave switch.
+"-----------------------------------------------------------------------
+function! utils#self#VimGoAutoSaveToggle()
+    if &ft == 'go'
+        if get(g:, 'go_fmt_autosave', 1) == 1
+            let g:go_fmt_autosave = 0
+        else
+            let g:go_fmt_autosave = 1
+        endif
+
+        if get(g:, 'go_imports_autosave', 1) == 1
+            let g:go_imports_autosave = 0
+        else
+            let g:go_imports_autosave = 1
+        endif
     endif
 endfunction

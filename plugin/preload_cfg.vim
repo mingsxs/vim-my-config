@@ -351,3 +351,4 @@ endfunction
 " Plugin Settings: vim-go.
 "-----------------------------------------------------------------------
 let g:go_doc_keywordprg_enabled = 0  " disable `K` map for godoc
+command! -nargs=0 GoAutoSaveToggle call utils#self#VimGoAutoSaveToggle()
