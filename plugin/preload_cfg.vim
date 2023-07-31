@@ -162,7 +162,7 @@ let g:ale_linters = {
 " configure options for particular linter commands
 " python flake8
 " https://pycodestyle.pycqa.org/en/latest/intro.html#error-codes
-call ale#Set('python_flake8_options', '--ignore=E221,E222,E501,E241')
+call ale#Set('python_flake8_options', '--ignore=E221,E222,E501,E241,W503,W504')
 " Only run linters specified in ale_linters settings.
 let g:ale_linters_explicit = 0
 " Disable ale completion.
