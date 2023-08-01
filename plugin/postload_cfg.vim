@@ -353,3 +353,9 @@ augroup END
 "-----------------------------------------------------------------------
 inoremap <silent> <esc> <esc>l
 nnoremap <silent> <Leader>e :call utils#self#EscMapToggle()<cr>
+
+
+"-----------------------------------------------------------------------
+" Switch between tab/tab expanded modes.
+"-----------------------------------------------------------------------
+nnoremap <silent> <Leader>t :call utils#self#TabSpaceToggle()<cr>
