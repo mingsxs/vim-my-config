@@ -65,31 +65,31 @@ let g:LookupFile_LookupFunc = 'utils#explugin#LookupFile_IgnoreCase'
 "-----------------------------------------------------------------------
 " Plugin Settings: Ctags.
 "-----------------------------------------------------------------------
-let g:tags_file_path = findfile("tags",".;$HOME")
-let g:autotagTagsFile = "tags"
-set tags=./tags,tags;$HOME
-if !filereadable(g:tags_file_path)
-    let g:tags_file_path = findfile("TAGS", ".;$HOME")
-    if filereadable(g:tags_file_path)
-        let g:autotagTagsFile = "TAGS"
-        set tags=./TAGS,TAGS;$HOME
-    endif
-endif
-let g:autotagCtagsCmd = "ctags"
-" let g:autotagDisabled = 1
-
-" Update ctags database file.
-augroup UpdateCtagsDatabase
-    au!
-    autocmd BufWritePost *
-        \ if filereadable(g:tags_file_path) |
-        \ :call system('ctags -a -f '.expand(g:tags_file_path)) |
-        \ endif
-augroup END
-
-" Open ctags search in tab/vertical split
-nmap <silent> <c-\> :tab split<cr>:exec("tag ".expand("<cword>"))<cr>
-nmap <silent> <leader><c-\> :vsp<cr>:exec("tag ".expand("<cword>"))<cr>
+"let g:tags_file_path = findfile('tags','.;$HOME')
+"let g:autotagTagsFile = 'tags'
+"set tags=./tags,tags;$HOME
+"if !filereadable(g:tags_file_path)
+"    let g:tags_file_path = findfile('TAGS', '.;$HOME')
+"    if filereadable(g:tags_file_path)
+"        let g:autotagTagsFile = 'TAGS'
+"        set tags=./TAGS,TAGS;$HOME
+"    endif
+"endif
+"let g:autotagCtagsCmd = 'ctags'
+"" let g:autotagDisabled = 1
+"
+"" Update ctags database file.
+"augroup UpdateCtagsDatabase
+"    au!
+"    autocmd BufWritePost *
+"        \ if filereadable(g:tags_file_path) |
+"        \ :call system('ctags -a -f '.expand(g:tags_file_path)) |
+"        \ endif
+"augroup END
+"
+"" Open ctags search in tab/vertical split
+"nmap <silent> <c-\> :tab split<cr>:exec('tag '.expand('<cword>'))<cr>
+"nmap <silent> <leader><c-\> :vsp<cr>:exec('tag '.expand('<cword>'))<cr>
 
 "-----------------------------------------------------------------------
 " Plugin Settings: cscope.
