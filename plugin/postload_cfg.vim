@@ -175,11 +175,12 @@ let g:html_indent_style1 = "inc"
 
 
 "-----------------------------------------------------------------------
-" Disable some stupid default key mappings by remapping to <NOP>.
+" Disable some useless default key mappings by remapping to <NOP>.
 "-----------------------------------------------------------------------
-map <s-k> <Nop>
-map <s-j> <Nop>
-map <s-w> <Nop>
+nmap <s-k> <Nop>
+nmap <s-j> <Nop>
+nmap <s-w> <Nop>
+nmap <s-m> <Nop>
 
 
 "-----------------------------------------------------------------------
