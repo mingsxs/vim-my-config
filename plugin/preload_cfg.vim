@@ -302,6 +302,8 @@ let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 " use gutentags_plus plugin to auto switch databases, https://github.com/skywind3000/gutentags_plus
 let g:gutentags_plus_switch = 1
 let g:gutentags_plus_height = 10
+" disable gutentags ctags by default
+let g:gutentags_ctags_enabled = 0
 " gutentags trace debug info, set to 1 to enable gutentags debug trace.
 let g:gutentags_trace = 0
 
