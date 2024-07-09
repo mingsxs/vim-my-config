@@ -95,7 +95,9 @@ let g:LookupFile_LookupFunc = 'utils#explugin#LookupFile_IgnoreCase'
 " Plugin Settings: cscope.
 "-----------------------------------------------------------------------
 " no finding tags file
-set nocst
+if !has('nvim')
+    set nocst
+endif
 
 " set what to show in quickfix window
 " Normal vim with no cscope autojump patch, nvim included
