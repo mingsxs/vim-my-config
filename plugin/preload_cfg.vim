@@ -251,7 +251,6 @@ set shortmess+=c
 "-----------------------------------------------------------------------
 " Set ag program name
 let g:ag_prg = "ag --vimgrep"
-
 " Set search from project root instead of current directory
 let g:ag_working_path_mode = "R"
 
@@ -267,7 +266,6 @@ function! s:agSearchExpandWord()
         endif
         let l:ichar = l:ichar + 1
     endwhile
-
     return substitute(l:agCmd, '#', '.', 'g')
 endfunction
 
@@ -342,13 +340,13 @@ map <silent> T <Plug>Sneak_T
 "-----------------------------------------------------------------------
 " Plugin Settings: vim-my-config.winloc.
 "-----------------------------------------------------------------------
-function! s:LeftMouseClik()
+function! s:LeftMouseClick()
     if (&mouse ==# 'nv' || &mouse ==# 'a') && get(g:, "left_mouse_click") == 0
         let g:left_mouse_click = 1
     endif
 endfunction
-"nnoremap <silent> <expr> <LeftMouse> <SID>LeftMouseClik()
-"vnoremap <silent> <expr> <LeftMouse> <SID>LeftMouseClik()
+"nnoremap <silent> <expr> <LeftMouse> <SID>LeftMouseClick()
+"vnoremap <silent> <expr> <LeftMouse> <SID>LeftMouseClick()
 
 
 "-----------------------------------------------------------------------
